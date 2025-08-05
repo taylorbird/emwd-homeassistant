@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  emwd-scraper:
+    build: .
+    restart: unless-stopped
+    environment:
+      # EMWD Credentials
+      EMWD_USERNAME: ${EMWD_USERNAME:-taylorlbird}
+      EMWD_PASSWORD: ${EMWD_PASSWORD:-xut2cyx.zrp9bgk.KAE}
+      EMWD_METER_ID: ${EMWD_METER_ID:-400027755}
+      
+      # MQTT Configuration
+      MQTT_HOST: ${MQTT_HOST:-10.33.103.125}
+      MQTT_PORT: ${MQTT_PORT:-1883}
+      MQTT_USERNAME: ${MQTT_USERNAME:-}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:-}
+      MQTT_TOPIC: ${MQTT_TOPIC:-home/sensor/water}
+      
+      # Cron Schedule (every 10 minutes by default)
+      # Format: minute hour day month day-of-week
+      # Examples:
+      #   */10 * * * *  = Every 10 minutes
+      #   0 */1 * * *   = Every hour
+      #   0 6,18 * * *  = Twice daily at 6 AM and 6 PM
+      CRON_SCHEDULE: ${CRON_SCHEDULE:-*/10 * * * *}
+      
+      # Timezone
+      TZ: ${TZ:-America/Los_Angeles}
+    
+    networks:
+      - default
+    
+    # Optional: Add to Home Assistant network if running in same Docker environment
+    # networks:
+    #   - homeassistant
+
+networks:
+  default:
+    driver: bridge
