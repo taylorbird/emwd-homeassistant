@@ -24,6 +24,7 @@ const config = {
 };
 
 let mqttClient;
+let lastSeenHour = null; // Track the last hour we've published
 
 // Initialize MQTT connection
 const connectMQTT = () => {
@@ -292,11 +293,46 @@ const publishToMQTT = (data, dataType) => {
   }
   
   if (Array.isArray(extractedData) && extractedData.length > 0) {
-    // Get the latest usage in gallons from the extracted dashboard data
-    const lastEntry = extractedData[extractedData.length - 1];
-    latestUsage = lastEntry.usage_gallons || 0;
-    const timeLabel = lastEntry.type === 'hourly' ? 'hour' : 'date';
-    console.log(`💧 Latest ${dataType} usage: ${lastEntry.usage_cf} CF = ${latestUsage} gallons (${timeLabel}: ${lastEntry.timestamp})`);
+    let entryToPublish = extractedData[extractedData.length - 1]; // Default to latest
+    
+    // For hourly data, find the most recent hour with data that we haven't published yet
+    if (dataType === 'hourly') {
+      // Look for new hours with data (working backwards from most recent)
+      let foundNewData = false;
+      
+      for (let i = extractedData.length - 1; i >= Math.max(0, extractedData.length - 6); i--) {
+        const entry = extractedData[i];
+        const hourKey = `${new Date().toDateString()}_${entry.timestamp}`;
+        
+        // If this hour has data and we haven't published it yet
+        if (entry.usage_cf > 0 && hourKey !== lastSeenHour) {
+          entryToPublish = entry;
+          lastSeenHour = hourKey;
+          foundNewData = true;
+          console.log(`🕐 Found new hourly data for ${entry.timestamp} (${entry.usage_cf} CF)`);
+          break;
+        }
+      }
+      
+      // If no new data found, check if we should publish the latest anyway
+      if (!foundNewData) {
+        const latestHourKey = `${new Date().toDateString()}_${entryToPublish.timestamp}`;
+        if (latestHourKey !== lastSeenHour) {
+          lastSeenHour = latestHourKey;
+          console.log(`🕐 Publishing current hour (${entryToPublish.timestamp}) - ${entryToPublish.usage_cf > 0 ? 'has data' : 'waiting for data'}`);
+        } else {
+          console.log(`⏭️ No new hourly data to publish (last: ${entryToPublish.timestamp})`);
+          return; // Skip publishing duplicate
+        }
+      }
+    }
+    
+    latestUsage = entryToPublish.usage_gallons || 0;
+    const timeLabel = entryToPublish.type === 'hourly' ? 'hour' : 'date';
+    console.log(`💧 Publishing ${dataType} usage: ${entryToPublish.usage_cf} CF = ${latestUsage} gallons (${timeLabel}: ${entryToPublish.timestamp})`);
+    
+    // Update the extracted data to use the selected entry
+    extractedData[extractedData.length - 1] = entryToPublish;
   } else {
     console.warn(`⚠️ No ${dataType} usage data found in response`);
     return;
