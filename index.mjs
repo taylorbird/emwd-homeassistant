@@ -7,8 +7,8 @@ import cron from 'node-cron';
 // Configuration from environment variables
 const config = {
   emwd: {
-    username: process.env.EMWD_USERNAME || 'taylorlbird',
-    password: process.env.EMWD_PASSWORD || 'xut2cyx.zrp9bgk.KAE',
+    username: process.env.EMWD_USERNAME,
+    password: process.env.EMWD_PASSWORD,
     meterId: process.env.EMWD_METER_ID || '400027755',
     loginUrl: 'https://myaccount.emwd.org/app/capricorn?para=index'
   },
