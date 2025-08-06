@@ -82,7 +82,11 @@ const publishHADiscovery = (dataType) => {
       sw_version: "Dual Mode (Daily + Hourly)"
     },
     json_attributes_topic: sensorType === 'hourly' ? config.mqtt.topicHourly : config.mqtt.topicDaily,
-    json_attributes_template: "{{ {'data_type': value_json.data_type, 'timestamp': value_json.data_timestamp, 'usage_cf': value_json.usage_cf} | tojson }}"
+    json_attributes_template: "{{ {'data_type': value_json.data_type, 'timestamp': value_json.data_timestamp, 'usage_cf': value_json.usage_cf} | tojson }}",
+    // Add last_reset template for hourly sensor
+    ...(sensorType === 'hourly' && {
+      last_reset_value_template: "{{ value_json.last_reset }}"
+    })
   };
 
   mqttClient.publish(discoveryTopic, JSON.stringify(discoveryConfig), { retain: true }, (err) => {
@@ -347,7 +351,29 @@ const publishToMQTT = (data, dataType) => {
     data_type: extractedData[extractedData.length - 1]?.type || 'unknown',
     recent_data: dataType === 'hourly' 
       ? extractedData.slice(-24) // Last 24 hours for hourly data
-      : extractedData.slice(-7)   // Last 7 days for daily data
+      : extractedData.slice(-7),   // Last 7 days for daily data
+    // Add last_reset for hourly measurements (when the hour started)
+    ...(dataType === 'hourly' && {
+      last_reset: (() => {
+        const entry = extractedData[extractedData.length - 1];
+        if (entry && entry.timestamp) {
+          // Parse the hour timestamp and create ISO time for start of that hour
+          const hourMatch = entry.timestamp.match(/(\d{1,2}):00\s([ap]m)/);
+          if (hourMatch) {
+            const hour24 = hourMatch[2] === 'pm' && hourMatch[1] !== '12' 
+              ? parseInt(hourMatch[1]) + 12 
+              : hourMatch[2] === 'am' && hourMatch[1] === '12'
+              ? 0
+              : parseInt(hourMatch[1]);
+            
+            const resetTime = new Date();
+            resetTime.setHours(hour24, 0, 0, 0);
+            return resetTime.toISOString();
+          }
+        }
+        return new Date().toISOString();
+      })()
+    })
   };
 
   const topic = dataType === 'hourly' ? config.mqtt.topicHourly : config.mqtt.topicDaily;
