@@ -414,9 +414,9 @@ const fetchDashboardData = async (cookieStr, dataType = 'daily', dailyDashboardU
     let refererUrl = config.emwd.loginUrl;
     
     if (dataType === 'hourly') {
-      // Use a recent date that should have data (2 days ago to ensure data is available)
+      // Use yesterday's date - EMWD typically has hourly data with 1-day delay
       const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() - 2);
+      targetDate.setDate(targetDate.getDate() - 1);
       const dayParam = targetDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
       
       dashboardUrl = `${baseUrl}&type=hourly&inquiryType=water&day=${dayParam}&tab=WATSMCON`;
@@ -471,7 +471,7 @@ const fetchDashboardData = async (cookieStr, dataType = 'daily', dailyDashboardU
     const requestedDate = dataType === 'hourly' ? 
       (() => {
         const targetDate = new Date();
-        targetDate.setDate(targetDate.getDate() - 2);
+        targetDate.setDate(targetDate.getDate() - 1);
         return targetDate.toISOString().split('T')[0];
       })() : null;
     
