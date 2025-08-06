@@ -223,8 +223,8 @@ const scrapeData = async () => {
       }
     });
 
-    const $ = cheerio.load(loginPage.data);
-    const token = $('input[name=jspCSRFToken]').val();
+    const $loginPage = cheerio.load(loginPage.data);
+    const token = $loginPage('input[name=jspCSRFToken]').val();
     console.log('🔑 CSRF token extracted:', token);
     if (!token) throw new Error('CSRF token not found');
     
