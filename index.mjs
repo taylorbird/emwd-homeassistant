@@ -120,13 +120,32 @@ const extractUsageFromDashboard = (html, expectedType = null) => {
           categoriesMatch = script.match(/xAxis\s*:\s*{[^}]*categories\s*:\s*(\[[\s\S]*?\])/);
         }
         
+        // If still no match, look for xAxisLabelArray variable (used in hourly charts)
+        if (!categoriesMatch && script.includes('xAxisLabelArray')) {
+          console.log('🔍 Looking for xAxisLabelArray variable...');
+          
+          // Look for where xAxisLabelArray is defined
+          const arrayDefMatch = script.match(/xAxisLabelArray\s*=\s*(\[[\s\S]*?\]);/);
+          if (arrayDefMatch) {
+            console.log('✅ Found xAxisLabelArray definition');
+            categoriesMatch = [null, arrayDefMatch[1]]; // Format to match expected structure
+          } else {
+            // Look for any array that looks like time categories
+            const timeArrays = script.match(/\[["'][0-9]{1,2}:[0-9]{2}\s[ap]m["'][\s\S]*?\]/g);
+            if (timeArrays && timeArrays.length > 0) {
+              console.log('✅ Found time array in script');
+              categoriesMatch = [null, timeArrays[0]];
+            }
+          }
+        }
+        
         if (categoriesMatch) {
           try {
             // Replace single quotes with double quotes for valid JSON
             const validJson = categoriesMatch[1].replace(/'/g, '"');
             categories = JSON.parse(validJson);
             const isHourly = (chartTitle && chartTitle.toLowerCase().includes('hourly')) || 
-                           (categories.length > 0 && (categories[0].includes('AM') || categories[0].includes('PM')));
+                           (categories.length > 0 && (categories[0].includes('am') || categories[0].includes('pm') || categories[0].includes('AM') || categories[0].includes('PM')));
             if (isHourly) {
               console.log(`✅ Found ${categories.length} hourly data points`);
               if (categories.length > 0) {
@@ -270,19 +289,13 @@ const fetchDashboardData = async (cookieStr, dataType = 'daily', dailyDashboardU
     let refererUrl = config.emwd.loginUrl;
     
     if (dataType === 'hourly') {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const dayParam = yesterday.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+      // Use a recent date that should have data (2 days ago to ensure data is available)
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() - 2);
+      const dayParam = targetDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
       
-      // Calculate date range for the past 30 days (matching the daily view)
-      const toDate = new Date();
-      const fromDate = new Date();
-      fromDate.setDate(fromDate.getDate() - 30);
-      const fromDateStr = fromDate.toISOString().split('T')[0];
-      const toDateStr = toDate.toISOString().split('T')[0];
-      
-      dashboardUrl = `${baseUrl}&type=hourly&day=${dayParam}&fromDate=${fromDateStr}&toDate=${toDateStr}&selectedMeterId=${config.emwd.meterId}&selectedRegisterNumber=`;
-      console.log(`📅 Fetching hourly data for date: ${dayParam} (range: ${fromDateStr} to ${toDateStr})`);
+      dashboardUrl = `${baseUrl}&type=hourly&inquiryType=water&day=${dayParam}&tab=WATSMCON`;
+      console.log(`📅 Fetching hourly data for date: ${dayParam}`);
       
       // Use the daily dashboard as referrer for hourly request
       if (dailyDashboardUrl) {
