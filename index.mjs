@@ -258,7 +258,7 @@ const publishToMQTT = (data, dataType) => {
 };
 
 // Fetch dashboard data with authentication cookies
-const fetchDashboardData = async (cookieStr, dataType = 'daily') => {
+const fetchDashboardData = async (cookieStr, dataType = 'daily', dailyDashboardUrl = null) => {
   try {
     console.log(`\n📊 Fetching ${dataType} usage data...`);
     
@@ -267,12 +267,27 @@ const fetchDashboardData = async (cookieStr, dataType = 'daily') => {
     
     // For hourly data, we need to specify a day parameter (using yesterday's date)
     let dashboardUrl = baseUrl;
+    let refererUrl = config.emwd.loginUrl;
+    
     if (dataType === 'hourly') {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       const dayParam = yesterday.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-      dashboardUrl = `${baseUrl}&type=hourly&day=${dayParam}&selectedMeterId=${config.emwd.meterId}&selectedRegisterNumber=`;
-      console.log(`📅 Fetching hourly data for date: ${dayParam}`);
+      
+      // Calculate date range for the past 30 days (matching the daily view)
+      const toDate = new Date();
+      const fromDate = new Date();
+      fromDate.setDate(fromDate.getDate() - 30);
+      const fromDateStr = fromDate.toISOString().split('T')[0];
+      const toDateStr = toDate.toISOString().split('T')[0];
+      
+      dashboardUrl = `${baseUrl}&type=hourly&day=${dayParam}&fromDate=${fromDateStr}&toDate=${toDateStr}&selectedMeterId=${config.emwd.meterId}&selectedRegisterNumber=`;
+      console.log(`📅 Fetching hourly data for date: ${dayParam} (range: ${fromDateStr} to ${toDateStr})`);
+      
+      // Use the daily dashboard as referrer for hourly request
+      if (dailyDashboardUrl) {
+        refererUrl = dailyDashboardUrl;
+      }
     }
     
     const dashboardRes = await axios.get(dashboardUrl, {
@@ -283,7 +298,7 @@ const fetchDashboardData = async (cookieStr, dataType = 'daily') => {
         'Connection': 'keep-alive',
         'Cookie': cookieStr,
         'Pragma': 'no-cache',
-        'Referer': config.emwd.loginUrl,
+        'Referer': refererUrl,
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
         'Sec-Fetch-Site': 'same-origin',
@@ -522,13 +537,14 @@ const scrapeData = async () => {
     console.log('🏠 Fetching water usage data from dashboard...\n');
     
     // Fetch daily data first
+    const dailyDashboardUrl = 'https://myaccount.emwd.org/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON';
     await fetchDashboardData(updatedCookieStr, 'daily');
     
     // Small delay between requests to avoid overwhelming the server
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // Then fetch hourly data
-    await fetchDashboardData(updatedCookieStr, 'hourly');
+    // Then fetch hourly data with daily dashboard as referrer
+    await fetchDashboardData(updatedCookieStr, 'hourly', dailyDashboardUrl);
 
   } catch (err) {
     console.error('💥 Error:', err.message);
