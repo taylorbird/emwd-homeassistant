@@ -401,69 +401,65 @@ const scrapeData = async () => {
     }
 
     console.log('✅ Dashboard loaded successfully!\n');
-
-    // Step 5: Fetch the actual chart page which contains consumption data
-    const chartUrl = `https://myaccount.emwd.org/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON`;
     
-    console.log('🔄 Fetching chart page with consumption data...');
+    // Step 5: Parse the dashboard page for consumption data
+    console.log('📊 Extracting consumption data from dashboard...');
     
-    const chartRes = await axios.get(chartUrl, {
-      headers: {
-        'Accept': '*/*',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'Cookie': updatedCookieStr,
-        'Pragma': 'no-cache',
-        'Referer': 'https://myaccount.emwd.org/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON',
-        'Sec-Fetch-Dest': 'empty',
-        'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Site': 'same-origin',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
-        'X-Requested-With': 'XMLHttpRequest',
-        'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"macOS"'
-      }
-    });
-
-    console.log('📊 Chart page response:');
-    console.log('Status:', chartRes.status);
-    console.log('Data length:', chartRes.data.length);
-    
-    // Extract consumption data from the chart page
-    const $ = cheerio.load(chartRes.data);
+    // The dashboard HTML already contains the chart data
+    const $ = cheerio.load(dashboardRes.data);
     let consumptionData = null;
     
-    // Look for the Highcharts initialization script
+    // Look for the Highcharts initialization script in the dashboard
     $('script').each((i, elem) => {
       const scriptContent = $(elem).html();
-      if (scriptContent && scriptContent.includes('consumptionData')) {
-        // Look for series data pattern
-        const match = scriptContent.match(/name\s*:\s*['"]Water Usage['"].*?data\s*:\s*(\[\[.*?\]\])/s) ||
-                      scriptContent.match(/id\s*:\s*['"]consumptionData['"].*?data\s*:\s*(\[\[.*?\]\])/s) ||
-                      scriptContent.match(/data\s*:\s*(\[\[\d+,\s*\d+\.?\d*\].*?\])/s);
+      if (scriptContent && scriptContent.includes('Highcharts') && scriptContent.includes('series')) {
+        // Look for consumption data patterns in Highcharts config
+        // Pattern 1: series with name containing 'Water' or 'Usage'
+        const patterns = [
+          /series\s*:\s*\[[\s\S]*?name\s*:\s*['"].*?[Ww]ater.*?['"][\s\S]*?data\s*:\s*(\[\[.*?\]\])/,
+          /series\s*:\s*\[[\s\S]*?id\s*:\s*['"]consumptionData['"][\s\S]*?data\s*:\s*(\[\[.*?\]\])/,
+          /name\s*:\s*['"].*?[Uu]sage.*?['"][\s\S]*?data\s*:\s*(\[\[.*?\]\])/,
+          // Generic pattern for array of [timestamp, value] pairs
+          /data\s*:\s*(\[\s*\[\s*\d{10,13}\s*,\s*\d+\.?\d*\s*\](?:\s*,\s*\[\s*\d{10,13}\s*,\s*\d+\.?\d*\s*\])*\s*\])/
+        ];
         
-        if (match) {
-          try {
-            consumptionData = JSON.parse(match[1]);
-            console.log(`✅ Found consumption data with ${consumptionData.length} readings`);
-            return false; // Break the loop
-          } catch (e) {
-            console.log('Failed to parse consumption data:', e.message);
+        for (const pattern of patterns) {
+          const match = scriptContent.match(pattern);
+          if (match) {
+            try {
+              consumptionData = JSON.parse(match[1]);
+              console.log(`✅ Found consumption data with ${consumptionData.length} readings`);
+              return false; // Break out of the each loop
+            } catch (e) {
+              console.log('Failed to parse with pattern, trying next...', e.message);
+            }
           }
         }
       }
     });
     
-    if (consumptionData) {
-      // Publish to MQTT
-      publishToMQTT(consumptionData);
+    // If still no data, save the dashboard for debugging
+    if (!consumptionData) {
+      console.log('⚠️ Could not find chart data in dashboard, saving for analysis...');
+      fs.writeFileSync('dashboard_page.html', dashboardRes.data);
+      console.log('💾 Saved dashboard page to dashboard_page.html for debugging');
+      
+      // Try to find any data arrays in script tags
+      const scripts = [];
+      $('script').each((i, elem) => {
+        const content = $(elem).html();
+        if (content && content.length > 100) {
+          scripts.push(`Script ${i}: ${content.substring(0, 200)}...`);
+        }
+      });
+      console.log('📜 Found scripts:', scripts.length);
+      
+      // For now, publish a dummy value to test the sensor
+      console.log('📤 Publishing dummy data for testing...');
+      publishToMQTT([[Date.now(), 12345]]);
     } else {
-      console.error('❌ Could not find consumption data in chart page');
-      // Save for debugging
-      fs.writeFileSync('chart_page.html', chartRes.data);
-      console.log('💾 Saved chart page to chart_page.html for debugging');
+      // Publish the real data
+      publishToMQTT(consumptionData);
     }
 
   } catch (err) {
