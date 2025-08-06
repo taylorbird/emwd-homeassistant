@@ -82,7 +82,7 @@ const publishHADiscovery = (dataType) => {
       sw_version: "Dual Mode (Daily + Hourly)"
     },
     json_attributes_topic: sensorType === 'hourly' ? config.mqtt.topicHourly : config.mqtt.topicDaily,
-    json_attributes_template: "{{ {'data_type': value_json.data_type, 'timestamp': value_json.data_timestamp, 'usage_cf': value_json.usage_cf} | tojson }}",
+    json_attributes_template: "{{ {'data_type': value_json.data_type, 'meter_timestamp': value_json.data_timestamp, 'measurement_time': value_json.measurement_time, 'usage_cf': value_json.usage_cf, 'scraped_at': value_json.timestamp} | tojson }}",
     // Add last_reset template for hourly sensor
     ...(sensorType === 'hourly' && {
       last_reset_value_template: "{{ value_json.last_reset }}"
@@ -342,37 +342,47 @@ const publishToMQTT = (data, dataType) => {
     return;
   }
 
+  // Calculate proper timestamps for the measurement period
+  const entry = extractedData[extractedData.length - 1];
+  let measurementTime, lastReset;
+  
+  if (dataType === 'hourly' && entry?.timestamp) {
+    // For hourly data, determine the actual measurement time
+    const hourMatch = entry.timestamp.match(/(\d{1,2}):00\s([ap]m)/);
+    if (hourMatch) {
+      const hour24 = hourMatch[2] === 'pm' && hourMatch[1] !== '12' 
+        ? parseInt(hourMatch[1]) + 12 
+        : hourMatch[2] === 'am' && hourMatch[1] === '12'
+        ? 0
+        : parseInt(hourMatch[1]);
+      
+      // Use the date from the fetched dashboard data (2 days ago)
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() - 2);
+      targetDate.setHours(hour24, 0, 0, 0);
+      
+      measurementTime = targetDate.toISOString();
+      lastReset = targetDate.toISOString(); // Hour started at the same time
+    }
+  } else if (dataType === 'daily' && entry?.timestamp) {
+    // For daily data, use the actual date from the data
+    measurementTime = new Date(entry.timestamp + 'T23:59:59.999Z').toISOString();
+  }
+
   const payload = {
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString(), // When we scraped it
     meterId: config.emwd.meterId,
     usage: latestUsage,
-    data_timestamp: extractedData[extractedData.length - 1]?.timestamp,
-    usage_cf: extractedData[extractedData.length - 1]?.usage_cf,
-    data_type: extractedData[extractedData.length - 1]?.type || 'unknown',
+    data_timestamp: entry?.timestamp, // Raw timestamp from meter
+    measurement_time: measurementTime || new Date().toISOString(), // Actual measurement period
+    usage_cf: entry?.usage_cf,
+    data_type: entry?.type || 'unknown',
     recent_data: dataType === 'hourly' 
       ? extractedData.slice(-24) // Last 24 hours for hourly data
       : extractedData.slice(-7),   // Last 7 days for daily data
-    // Add last_reset for hourly measurements (when the hour started)
-    ...(dataType === 'hourly' && {
-      last_reset: (() => {
-        const entry = extractedData[extractedData.length - 1];
-        if (entry && entry.timestamp) {
-          // Parse the hour timestamp and create ISO time for start of that hour
-          const hourMatch = entry.timestamp.match(/(\d{1,2}):00\s([ap]m)/);
-          if (hourMatch) {
-            const hour24 = hourMatch[2] === 'pm' && hourMatch[1] !== '12' 
-              ? parseInt(hourMatch[1]) + 12 
-              : hourMatch[2] === 'am' && hourMatch[1] === '12'
-              ? 0
-              : parseInt(hourMatch[1]);
-            
-            const resetTime = new Date();
-            resetTime.setHours(hour24, 0, 0, 0);
-            return resetTime.toISOString();
-          }
-        }
-        return new Date().toISOString();
-      })()
+    // Add last_reset for hourly measurements
+    ...(dataType === 'hourly' && lastReset && {
+      last_reset: lastReset
     })
   };
 
