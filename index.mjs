@@ -94,48 +94,85 @@ const extractUsageFromDashboard = (html, expectedType = null) => {
     let categories = null;
     let usageData = null;
     let chartTitle = null;
+    let chartFound = false;
     
     // Look for the Highcharts configuration script
     $('script').each((i, elem) => {
       const script = $(elem).html();
-      if (!script || (!script.includes('Highcharts.Chart') && !script.includes('Highcharts.chart'))) return;
+      if (!script) return;
       
-      // Extract chart title to know if it's hourly or daily
-      const titleMatch = script.match(/title\s*:\s*{[^}]*text\s*:\s*["']([^"']+)["']/);
-      if (titleMatch) {
-        chartTitle = titleMatch[1];
-        console.log(`📊 Chart type: ${chartTitle}`);
-      }
-      
-      // Extract categories (dates for daily, hours for hourly)
-      const categoriesMatch = script.match(/categories\s*:\s*(\[[\s\S]*?\])/);
-      if (categoriesMatch) {
-        try {
-          // Replace single quotes with double quotes for valid JSON
-          const validJson = categoriesMatch[1].replace(/'/g, '"');
-          categories = JSON.parse(validJson);
-          const isHourly = chartTitle && chartTitle.toLowerCase().includes('hourly');
-          if (isHourly) {
-            console.log(`✅ Found ${categories.length} hourly data points`);
-          } else {
-            console.log(`✅ Found ${categories.length} dates from ${categories[0]} to ${categories[categories.length-1]}`);
-          }
-        } catch (e) {
-          console.error('Failed to parse categories:', e.message);
+      // Check for Highcharts in multiple formats
+      if (script.includes('Highcharts.Chart') || script.includes('Highcharts.chart') || script.includes('new Highcharts')) {
+        chartFound = true;
+        console.log(`🔍 Found Highcharts in script block ${i + 1}`);
+        
+        // Extract chart title to know if it's hourly or daily
+        const titleMatch = script.match(/title\s*:\s*{[^}]*text\s*:\s*["']([^"']+)["']/);
+        if (titleMatch) {
+          chartTitle = titleMatch[1];
+          console.log(`📊 Chart title: "${chartTitle}"`);
         }
-      }
-      
-      // Extract usage data from the "Usage" series
-      const usageMatch = script.match(/name\s*:\s*"Usage"[\s\S]*?data\s*:\s*(\[[^\]]+\])/);
-      if (usageMatch) {
-        try {
-          usageData = JSON.parse(usageMatch[1]);
-          console.log(`✅ Found ${usageData.length} usage values (in cubic feet)`);
-        } catch (e) {
-          console.error('Failed to parse usage data:', e.message);
+        
+        // Extract categories (dates for daily, hours for hourly) - try multiple patterns
+        let categoriesMatch = script.match(/categories\s*:\s*(\[[\s\S]*?\])/);
+        if (!categoriesMatch) {
+          // Try alternative pattern for categories in xAxis
+          categoriesMatch = script.match(/xAxis\s*:\s*{[^}]*categories\s*:\s*(\[[\s\S]*?\])/);
+        }
+        
+        if (categoriesMatch) {
+          try {
+            // Replace single quotes with double quotes for valid JSON
+            const validJson = categoriesMatch[1].replace(/'/g, '"');
+            categories = JSON.parse(validJson);
+            const isHourly = (chartTitle && chartTitle.toLowerCase().includes('hourly')) || 
+                           (categories.length > 0 && (categories[0].includes('AM') || categories[0].includes('PM')));
+            if (isHourly) {
+              console.log(`✅ Found ${categories.length} hourly data points`);
+              if (categories.length > 0) {
+                console.log(`   First: ${categories[0]}, Last: ${categories[categories.length-1]}`);
+              }
+            } else {
+              console.log(`✅ Found ${categories.length} dates from ${categories[0]} to ${categories[categories.length-1]}`);
+            }
+          } catch (e) {
+            console.error('Failed to parse categories:', e.message);
+            console.log('Raw categories string:', categoriesMatch[1].substring(0, 200));
+          }
+        } else {
+          console.log('⚠️ No categories found in this script block');
+        }
+        
+        // Extract usage data from the "Usage" series - try multiple patterns
+        let usageMatch = script.match(/name\s*:\s*["']Usage["'][\s\S]*?data\s*:\s*(\[[^\]]+\])/);
+        if (!usageMatch) {
+          // Try without quotes around Usage
+          usageMatch = script.match(/name\s*:\s*Usage[\s\S]*?data\s*:\s*(\[[^\]]+\])/);
+        }
+        if (!usageMatch) {
+          // Try to find any series data
+          usageMatch = script.match(/series\s*:\s*\[[\s\S]*?data\s*:\s*(\[[^\]]+\])/);
+        }
+        
+        if (usageMatch) {
+          try {
+            usageData = JSON.parse(usageMatch[1]);
+            console.log(`✅ Found ${usageData.length} usage values (in cubic feet)`);
+          } catch (e) {
+            console.error('Failed to parse usage data:', e.message);
+            console.log('Raw usage data string:', usageMatch[1].substring(0, 200));
+          }
+        } else {
+          console.log('⚠️ No usage data found in this script block');
         }
       }
     });
+    
+    if (!chartFound) {
+      console.log('❌ No Highcharts configuration found in HTML');
+      // Save a snippet of the HTML for debugging
+      console.log('HTML preview:', html.substring(0, 1000));
+    }
     
     if (categories && usageData && categories.length === usageData.length) {
       // Convert from cubic feet to gallons and combine with timestamps
@@ -227,7 +264,16 @@ const fetchDashboardData = async (cookieStr, dataType = 'daily') => {
     
     // Build URL based on data type
     const baseUrl = 'https://myaccount.emwd.org/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON';
-    const dashboardUrl = dataType === 'hourly' ? `${baseUrl}&type=hourly` : baseUrl;
+    
+    // For hourly data, we need to specify a day parameter (using yesterday's date)
+    let dashboardUrl = baseUrl;
+    if (dataType === 'hourly') {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const dayParam = yesterday.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+      dashboardUrl = `${baseUrl}&type=hourly&day=${dayParam}&selectedMeterId=${config.emwd.meterId}&selectedRegisterNumber=`;
+      console.log(`📅 Fetching hourly data for date: ${dayParam}`);
+    }
     
     const dashboardRes = await axios.get(dashboardUrl, {
       headers: {
@@ -261,6 +307,12 @@ const fetchDashboardData = async (cookieStr, dataType = 'daily') => {
     }
 
     console.log(`✅ ${dataType} dashboard loaded successfully!`);
+    
+    // Save hourly dashboard for debugging if extraction fails
+    if (dataType === 'hourly') {
+      fs.writeFileSync('hourly_dashboard.html', dashboardRes.data);
+      console.log('💾 Saved hourly dashboard to hourly_dashboard.html for debugging');
+    }
     
     // Extract and publish the data
     publishToMQTT(dashboardRes.data, dataType);

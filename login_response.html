@@ -4,22 +4,30 @@
 
 
 
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	
+<title>EMWD :: Select My Account</title>
+
 			
 
 
 <meta name="description" content="EMWD is your power hub for customer self service web portals supplying electrical energy to residential, commercial and industrial customers.">
 <meta name="keywords" content="EMWD, MyAccount, deregulation, heating, energy, power, utility, appliance, range, stove, dryer, water heater, air conditioning, fireplace, home improvement, renovation, electricity, electric power, electric energy, electric generation, electric meter, customer service, electric bill, residential electric rates, business electric rates, energy audit, kilowatt, kilowatt hour, kWh, bill payment information, electrical usage rates, rates, bill payment information, electrical information, electricity information, electrical services">
-	
-	
+
+
+
+
+
+
 
 
 
@@ -39,14 +47,29 @@
 	<link rel="icon" href="/favicon.ico" type="image/x-icon">
 
 
-	<title>EMWD :: My Account Login</title>
-
+<style type="text/css">
+	/*.paging_full_numbers { width:48% !important; }
+	.compareIndicatorLeft { float:left; width:33.3%; height:150px; text-align: center; }
+	.box-sizing { box-sizing: border-box; margin: 0; }
+	*/
 	
-
+	/* iFrame Styles */
+	.iframetab { width:100%;height:auto;border:0px;margin:0px;
+	        /*background:url("/PortalV4.0/images/spin_loading_24x24.gif") no-repeat 50% 150px; /* loading image */
+	}
 	
+</style>
+
+
+
 </head>
 
-<body onLoad="initFields(); getAccountNo();">
+<body 
+>
+
+
+
+
 
 
 
@@ -133,168 +156,1918 @@
 
 
 
-<div class="capricorn-container container">
 
 
 
-	
-	
-	
-	
-	<div class="panel panel-danger">
-		<div class="panel-heading">
-			<h4>Your Login and/or Password is not valid.<br>Please try again.</h4>
-		</div>
-	</div>
-	
 
+<div id="dashboard-left-nav-container" class="capricorn-container container-fluid">
 	
+	<form id="form-logoff" method="post" action="/app/capricorn">
+	  <input type="hidden" name="para" value="logoff">
+	  <input type="hidden" name="jspCSRFToken" value="b24d2926416f4c460a30ba6c20cf3c1b09bc1b9f">
+	</form>
 	
-	
-	<p><strong><span style="font-size:14px;"></span></strong><span style="font-size:14px;"><strong>How to view and pay your bill.</strong>&nbsp;<a href="https://youtu.be/EsC3CDugtko"><span style="color:#00A9E0;">Watch the video</span></a>.&nbsp; &nbsp;&nbsp;<strong>Trouble seeing the &ldquo;Continue&rdquo; button in MyAccount?</strong>&nbsp;<a aria-label="PDF" href="https://www.emwd.org/sites/main/files/file-attachments/myaccount_portal_screen_visibility_help.pdf"><span style="color:#00A9E0;">Click here for a How-To Guide</span></a>.&nbsp; &nbsp;&nbsp;<strong>EMWD offers several payment assistance programs to help customers bring accounts current.</strong>&nbsp;<a href="https://www.emwd.org/payment-assistance-programs"><span style="color:#00A9E0;">Click here to learn more.</span></a>&nbsp; &nbsp;<strong>Want to Pay by Phone? Account Balance and Bill Payment&nbsp;&ndash; </strong><span style="color:#00A9E0;">Call: 951-383-6055</span><strong><span style="color:#00A9E0;"></span></strong>&nbsp;&nbsp;</span><strong><span style="font-size:14px;"></span></strong></p>
+	<div id="selectAccountRibbon">	
+		<div class="capricorn-selected-panel">				
+			
 
-	
 
-	
+
+
+
+
+
+
+<div class="panel-heading">
 	<div class="row">
 	
+		<div class="hidden-lg hidden-md hidden-sm pull-left" style="padding-left:15px;"> 
+			<div class="btn-group ldb-nav">
+				<div class="navbar navbar-default fhmm" style="padding-bottom:0px;">
+					<div class="toggle-panel">
+						<!-- <i class="fa fa-bars fa-1-5x"></i> -->
+						<a type="button" class="btn btn-default btn-sm dropdown-toggle capricorn-menu-btn hidden-lg hidden-md hidden-sm" data-toggle="collapse" data-target="#main-menu" 
+								aria-expanded="false">
+							<span class="sr-only"></span>
+							<span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+	
+		<div style="padding-left:15px;padding-right:15px;">
+			<div class="panel-title">
+			
+
+			
+				<a type="button" class="btn btn-default collapsed btn-sm capricorn-menu-btn" data-toggle="collapse" href="#collapseListGroup1" aria-expanded="false" aria-controls="collapseListGroup1">
+					 
+					<span id='numberOfAccountAttached' class='badge'></span>
+					<span class="hidden-xs">Change Account</span>
+				</a>	
+			
+			
+			
+				<a href="#" class="btn btn-default btn-sm capricorn-menu-btn hidden-lg hidden-md hidden-sm btnSwitchLanguage" > 
+					<span class="fa fa-language" aria-hidden="true"></span> Espa�ol 
+				</a>
+			
+			
+			
+			
+			<a type="button" class="btn btn-default btn-sm capricorn-menu-btn hidden-lg hidden-md hidden-sm refreshAccountButton" href="/app/capricorn?para=selectAccount&userAction=refresh&inAccountNumber=500087637-100087395&inMeterID=" onClick="showProcessingDialog();">
+				<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> <span class="hidden-xs">Refresh</span>
+			</a>
+			
+				
+				
+				<a type="button" class="btn btn-default btn-sm capricorn-menu-btn hidden-lg hidden-md hidden-sm logoff" href="#logoff">
+					<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout
+				</a>			
+			
+				<span class="hidden-xs">You are currently viewing a</span><span class="hidden-lg hidden-md hidden-sm">A</span>ccount  		
+				  
+				  <br class="hidden-sm hidden-md hidden-lg">
+				  
+					<strong>Charentes</strong> - 
+				  
+				  500087637: 
+				  33103 CHARENTES CT, WINCHESTER, CA  92596  
+				
+				
+				
+				
+				
+				
+				<div class="btn-group pull-right">
+					
+			  		
+					<a href="#" class="btn btn-default btn-sm capricorn-menu-btn hidden-xs btnSwitchLanguage" > 
+					  <span class="fa fa-language" aria-hidden="true"></span> Espa�ol 
+					</a>
+					
+					
+					
+					<a type="button" class="btn btn-default btn-sm capricorn-menu-btn hidden-xs refreshAccountButton" href="/app/capricorn?para=selectAccount&userAction=refresh&inAccountNumber=500087637-100087395&inMeterID=" onClick="showProcessingDialog();">
+					  <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> <span class="hidden-xs">Refresh</span>
+					</a>
+					
+					<a type="button" class="btn btn-default btn-sm capricorn-menu-btn hidden-xs logoff" href="#logoff">
+					  <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout 
+					</a>
+					
+				</div>
+				
+				
+				<div id="msgCenterDiv" class="btn-group pull-right" style="margin-top:-6px;margin-right:5px; display: none;">
+				    <button class="alert-button btn btn-link dropdown-toggle" data-toggle="dropdown" style="font-size:24px;padding:0;">
+				  	  <i class="fa fa-flag" aria-hidden="true"></i>
+				  	  <span id="msgCenterCount" class="badge badge-notify">0</span>
+				    </button>
+				    <ul class="dropdown-menu">
+					 						
+	                </ul>								  
+				</div>
+								
+			</div>		
+		</div>
+	</div>
+</div>
+
+
+
+
+<div class="modal fade" id="notificationsModal" tabindex="-1" role="dialog" aria-labelledby="notificationsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="notificationsModalLabel"></h4>
+      </div>
+      <div class="modal-body" id="notificationModalBody">
+      </div> 
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+        	[notifications_modal_close_button]
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+
+	$(document).ready(function() { 	
+		$('.displayMessage').on('click', function(e) {
+			e.preventDefault();
+			var title = $(this).data("title");
+			var type = $(this).data("type");
+			
+			
+			var titleIcon = "";
+			if (type == '10') {
+				titleIcon ="<i class='fa fa-lg fa-exclamation-triangle text-danger padding-right-4' aria-hidden='true' title='Urgent'></i>";
+			} else if (type == '20'){
+				titleIcon = "<i class='fa fa-lg fa-exclamation-circle text-warning padding-right-4' aria-hidden='true' title='Important'></i>";
+			} else {
+				titleIcon = "<i class='fa fa-lg fa-info-circle text-info padding-right-4' aria-hidden='true' title='Standard'></i>";
+			}
+			$("#notificationsModalLabel").html(titleIcon + title);
+		    
+			$("#notificationsModal").on("show.bs.modal", function(e) {
+			    var link = $(e.relatedTarget);
+			    $(this).find(".modal-body").css({		    	
+			    	'height':'auto'
+			    });
+			    $(this).find(".modal-body").load(link.attr("href"));			    
+			})
+		});
+	});
+	
+</script>	
+
+<script type="text/javascript">
+
+	var invokeMsgFromWS = false;
+	var hasPopupMessage = false;
+
+	function getMessageFromCap(){			
+		
+		
+		if (!invokeMsgFromWS && hasPopupMessage) {
+			$('#notificationsModal').modal('show');
+		}
+			
+	}
+
+	function getBillMessage(){
+		var outageAlertAjaxURL = "/app/capricorn?para=ajaxGetBillMessage";
+		$.ajax({type:"get",
+				cache: false,
+		        dataType: "json",			
+				url: outageAlertAjaxURL
+		}).done(function(data){		
+			
+			var hasDataFromWS = false;
+			if ( data.value && data.value != '') {
+				globalBillMsg = data.value ;				
+				
+							
+				$('#notificationModalBody').append(globalBillMsg);
+							
+				$('#msgCenterDiv').css('display', 'block');
+				$('#msgCenterLink').css('display', 'block');
+				$('#msgCenterCount').text(1) ;				
+				
+				hasDataFromWS = true;
+			}		
+			
+			if(hasPopupMessage || hasDataFromWS)
+				$('#notificationsModal').modal('show');
+			
+		});
+	}
+
+	$(document).ready(function() {
+		
+		$("#notificationsModal").appendTo("body");
+		
+		var title = "Messages";
+		$('#notificationsModalLabel').html(title);
+		
+		if(hasPopupMessage){
+			getMessageFromCap();
+		}
+		
+		if (invokeMsgFromWS) {
+			getBillMessage();
+		}	
+		
+		$('#notificationsModal').draggable({
+	    	"handle":".modal-header"
+	     });
+	});
+
+</script>
+
+
+		</div>
+	</div>
+	
+	<div id="tabs">
+	
+		<!--  
+		<div id="scotch-panel" class="sidebar">-->
+			<!-- required for floating -->
+			<!-- Nav tabs -->
+			<!-- 
+			<ul id="myAccountTabs" class="nav tabs-left hidden-sm hidden-xs" role="tablist">
+				
+			</ul>
+		</div> -->
+		
+		
+		<aside id="scotch-panel" class="dashboard-side-menu" 
+				
+				
+		>
+			<nav aria-label="Side Menu Navigation">
+				<ul id="myAccountTabs" class="nav nav-sidebar">
+					
+
+
+
+
+		<!-- 	      <li class="active"><a href="#mainTabs-dashboard" data-toggle="tab">My Dashboard</a></li>	 -->
+		 
+		
+		
+				<li class="active">
+					<a href="#mainTabs-dashboard" data-toggle="tab">
+						<i class="fa fa-home"></i> <span class="dashboard-left-nav">Home</span>
+					</a>
+				</li>	
+			
+		 
+		
+		
+				
+				<li class="">
+					<a class="" data-toggle="tab" href="#tabs-BILLINQ" rel="/app/capricorn?para=billInquirySelect&tab=BILLINQ">
+						<i class="fa fa-usd"></i> <span class="dashboard-left-nav">Bills & 
+Payment</span>
+					</a>
+				</li>
+				
+			
+		 
+		
+		
+				
+				<li class="">
+					<a class="" data-toggle="tab" href="#tabs-PAYHIST" rel="/app/capricorn?para=paymentHistoryInq&tab=PAYHIST">
+						<i class="fa fa-list"></i> <span class="dashboard-left-nav">Transactions</span>
+					</a>
+				</li>
+				
+			
+		 
+		
+		
+				
+				<li class="">
+					<a class="" data-toggle="tab" href="#tabs-CONSUMPTION" rel="/app/capricorn?para=consumptionInquiry&inquiryType=water&report=WATCONRP&tab=WATERCON">
+						<i class="fa fa-bar-chart"></i> <span class="dashboard-left-nav">Billed Usage</span>
+					</a>
+				</li>
+				
+			
+		 
+		
+		
+				
+				<li class="">
+					<a class="" data-toggle="tab" href="#tabs-WATSMCON" rel="/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON">
+						<i class="fa fa-signal"></i> <span class="dashboard-left-nav">Smart Meter</span>
+					</a>
+				</li>
+				
+			
+		 
+		
+		
+				
+				<li class="">
+					<a class="" data-toggle="tab" href="#tabs-bilCons" rel="/app/capricorn?para=usageCompareLastBill&tab=bilCons">
+						<i class="fa fa-tachometer"></i>
+ <span class="dashboard-left-nav">Compare</span>
+					</a>
+				</li>
+				
+			
+		 
+		
+		
+				
+				<li class="">
+					<a class="" data-toggle="tab" href="#tabs-SERVCREQ" rel="/app/capricorn?para=paymentHistoryInq&type=ServiceRequest&tab=SERVCREQ">
+						<i class="fa fa-tasks"></i>
+ <span class="dashboard-left-nav">Service Requests</span>
+					</a>
+				</li>
+				
+			
+		 
+		
+		
+				
+				<li class="">
+					<a class="" data-toggle="tab" href="#tabs-MYACCT" rel="/app/capricorn?para=myAccount&tab=MYACCT">
+						<i class="fa fa-user"></i>
+ <span class="dashboard-left-nav">Profile</span>
+					</a>
+				</li>
+				
+			
+		 
+		
+		
+				
+				<li class="">
+					<a class="" data-toggle="tab" href="#tabs-AWEFORMS" rel="/app/apolloForms.jsp?id=0&tab=AWEFORMS">
+						<i class="fa fa-file-text"></i> <span class="dashboard-left-nav">Forms</span>
+					</a>
+				</li>
+				
+			
+		 
+<script>
+$(function () {
+	$('[data-toggle="nav-popover"]').popover();
+})
+</script>
+				</ul>
+			</nav>
+		</aside>
+		
+		
+		
+		
+		
+
+				
+		<div id="accountTableContainer"> 
+			
+
+
+
+
+
+
+	<div class="page-wrapper" 
+			
+			
+	>
+
+<div id="collapseListGroup1" class="panel-collapse collapse" aria-labelledby="collapseListGroupHeading1">
+	<div class="capricorn-account-table-panel">
+		<h4>You have the following accounts linked to your web profile. Click an account button below to set it as your current active account.</h4>
+		<div class="panel   ">
+
+			<div id="select_account_panel_body" class="panel-body" style='padding:0'>
+
+				
+				<table id="accountTable" width="100%" class="table table-condensed table-hover table-bordered table-striped">
+					<thead>
+						<tr>
+							
+								<th class=" ACCCDE">								
+									Account
+								</th>
+							
+								<th class="hidden-xs AccountNickname">								
+									Nickname
+								</th>
+							
+								<th class="hidden-xs ACCaddressFields">								
+									Service Address
+								</th>
+							
+								<th class=" BalanceField">								
+									Balance
+								</th>
+							
+						</tr>
+					</thead> 
+					<tbody>
+						
+				
+					  
+					   	
+						<tr class="cap-table-row-odd">
+					  		
+						        	
+						           	
+					           		<td class="highlight">
+					           			<a type="button" class="btn btn-sm btn-primary "  href="/app/capricorn?para=selectAccount&userAction=select&inAccountNumber=500087637-100087395&inMeterID=&meterType=Sewer" onClick="showProcessingDialog();">
+					           				<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <!-- glyphicon for selected row -->
+								            
+								            	500087637
+								            
+								         </a>
+								         
+								         
+								 	</td>
+								 	
+								 	
+								 	
+					     
+					           		
+					         
+						        	
+						           						     
+										<td class=" highlight hidden-xs">
+											
+											<span id="nickname_0">Charentes</span>
+										</td> 	
+								 	
+					     
+					           		
+					         
+						        	
+						           	
+									 	<td class=" highlight hidden-xs">
+									    	33103 CHARENTES CT, WINCHESTER, CA, 92596
+									    	
+									    	
+	                       					<div class="text-danger"><strong>	
+					                     		
+					                        </strong></div>
+								        
+								        </td>
+							          
+								 	
+					     
+					           		
+					         
+						        	
+						           	
+								 		<td class="highlight ">
+								 			
+							          			<!-- Balance on Larger Small -->
+							          			<div align="right"><span id="accountBalance_0">$177.91</span></div>
+									    	
+									  	</td>
+									  		
+							  		
+				          			
+					     
+					           		
+					         
+					        </tr>   
+					        
+					        
+					    
+					    
+					     
+					     	
+								<tfoot>
+									
+									<tr class="hidden-xs">
+										
+											
+											<td>
+												&nbsp;
+											</td>
+										
+											
+											<td>
+												&nbsp;
+											</td>
+										
+											<td>
+												<div align="right"><strong>Total Balance</strong></div>
+											</td>
+											<td>
+												<div align="right">
+													<strong>
+														<span id="totalBalance">
+									         			
+									             			$177.91
+										          		
+										          		</span>
+									          		</strong>
+								          		</div>
+											</td>
+																										
+								</tr>
+							</tfoot>		   
+						  
+					</tbody>		
+
+				</table>
+				
+				
+				<div class='btn-group pull-left' style='margin:10px'>
+					<a type="button" class="btn btn-default btn-sm capricorn-menu-btn" href="#" onclick="manageProfileLink(); return false;"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Manage linked accounts</a>
+				</div>
+				
+			</div>
+			
+		</div>
+	</div>
+</div>
+
+	</div>
+
+
+<script type="text/javascript">
+// refresh # of accounts attached on dashboard beside MyAccounts (need to refresh the # after add/delete)
+document.getElementById("numberOfAccountAttached").innerHTML = "1"; //CAP-606 : changed vAccountInfo to accountsLoaded to have correct number of accounts in case of displayig multiple meters and single meters for each accounts
+
+
+
+function getAccountInfoIntoAccountListWidget(seq, totalBulkAccounts, reloadSelectAccount) { // Change Number: 320-027
+	  
+	      getAccountDetailIntoAccountListWidget(seq, totalBulkAccounts, reloadSelectAccount);
+	  
+}
+
+
+function getAccountDetailIntoAccountListWidget(seq, totalBulkAccounts, reloadSelectAccount){
+	var debug = "N"; // Y or N
+	var id = "accountServiceAddress_";
+	var accountNumbers = "";
+	var maxNumOfCalls = 5; 
+	for (i=parseInt(seq); i<(parseInt(seq)+parseInt(maxNumOfCalls)); i++) {
+	    if (i > parseInt(totalBulkAccounts)) break;
+	    // check if the object (acocunt number) exists on the page
+	    $('#button_'+id+i).button('loading');
+	    if (document.getElementById("bulkAccountNbr_" + i) != null) {
+	      if (accountNumbers!="") accountNumbers += "|";
+	      accountNumbers += document.getElementById("bulkAccountNbr_" + i).value;
+	    }
+	 } // end for i
+	 
+	 if (debug=="Y") alert("Start with seq=" + seq + ", account #s=" + accountNumbers);
+	 
+	 var ajaxURL = "/app/capricorn?para=ajaxGetAccountInfo&inquiryType=getAccountDetail&reload=" + reloadSelectAccount + "&accountNumbers=" + encodeURI(accountNumbers);
+	 $.ajax({type:"GET",
+		cache: false,
+		url: ajaxURL,
+		success: function(data){
+		  loadDataIntoAccountListWidget(data, seq);
+		}
+  	}).done(function(){
+		  
+  		
+ 		var totalBalance = 0;
+		$('[id^="accountBalance_"]').each(function(){
+			var balanceString = $(this).text().replace(/[^\d.-]/g,'');
+			if(balanceString!=''){
+				var balanceAmount = parseFloat(balanceString, 10);
+				totalBalance += balanceAmount;
+			}
+		});
+		$("#totalBalance").text("$" + Number(totalBalance).toFixed(2));
+
+		
+	  	
+		if(reloadSelectAccount === true){
+		   var tableRow = parseInt(seq);
+		   window.location.href = document.getElementById(id2 + tableRow).href;
+		}
+	});
+	 
+}
+
+
+function getBulkAccountSummaryIntoAccountListWidget(startIndex, totalBulkAccounts){
+	 
+	 $("[id^='button_accountServiceAddress_']").button('loading');
+	
+	 var ajaxURL = "/app/capricorn?para=ajaxGetAccountInfo&inquiryType=loadBulkAccountsSummary&startIndex=" + startIndex;
+	 var newIndex = parseInt(startIndex, 10);
+	 $.ajax({type:"GET",
+		cache: false,
+		url: ajaxURL
+  	}).done(function(data){ // sequential request.
+  		loadDataIntoAccountListWidget(data, startIndex);
+		// update the totalBalance
+		var totalBalance = 0;
+		$('[id^="accountBalance_"]').each(function(){
+			var balanceString = $(this).text().replace(/[^\d.-]/g,'');
+			if(balanceString!='') {
+				var balanceAmount = parseFloat(balanceString, 10);
+				totalBalance += balanceAmount;
+			}
+		});
+		$("#totalBalance").text("$" + Number(totalBalance).toFixed(2));
+		
+  		// load new bulk
+  		newIndex += 0;
+		if(newIndex < totalBulkAccounts){
+  			getBulkAccountSummaryIntoAccountListWidget(newIndex, totalBulkAccounts);
+		}
+		
+		// reset the buttons if applicable.
+		$("[id^='button_accountServiceAddress_']").button('reset');
+	});
+	
+}
+
+function loadDataIntoAccountListWidget(data, seq) {
+	var debug = "N"; // Y or N
+	
+	let table = $("#accountTable").DataTable(); // CAP-2048 get Datatables API instance
+	var id = "accountServiceAddress_";
+	var id1 = "accountBalance_";
+	var id3 = "nickname_"; 
+	var id4 = "accountType_"; 
+	var id5 = "accountMeterType_"; 
+	var id6 = "accountStatus_"; 
+	var id7 = "accountMeterId_"; 
+	
+	var aInfo = $.trim(data).split('|');
+	var idx = 0;
+	
+	
+	for (j = parseInt(seq); j < (parseInt(seq) + aInfo.length); j++) {
+		
+		if (debug == "Y") {alert(id + j + " = " + "(idx=" + idx + ") " + aInfo[idx]);}
+		// for the 'Collapsed Table with list of accounts' section
+		var aAccountDetailInfo = $.trim(aInfo[idx]).split('^');
+		
+		
+		// if the particular error code is passed back, then show the error message and disable the button. Then continue to process the next row.
+		if (aAccountDetailInfo[0] === 'error-notAuthorizedOrNotFound') {
+			if (document.getElementById("button_" + id + j) != null) { // remove the loading button
+				// document.getElementById("button_" + id + j).style.display = 'none';
+				// CAP-2048 dev note: normal DOM manipulation doesn't work for Datatables child rows
+				let cell = $("#button_" + id + j).parent(); // get the td cell that contains the button
+				let html = cell.html(); // get the td cell's inner HTML
+				let regExp = new RegExp("<button.*?</button>"); // regular expression to find the button HTML tag
+				html = html.replace(regExp, ""); // remove the button HTML tag from the cell's HTML
+				table.cell(cell).data(html).draw(); // update the cell using Datatables API method
+			}
+			if (document.getElementById(id + j) != null) { // show error message in the first column.
+				// document.getElementById(id + j).innerHTML = "<p class='text-danger'>" + aAccountDetailInfo[1] + "</p>";
+				let cell = $("#" + id + j).parent(); // CAP-2048 get the td cell that will contain the service address
+				let html = cell.html(); // get the td cell's inner HTML
+				let openingTag = '<span id="' + id + j + '">';
+				let closingTag = '</span>';
+				let regExp = new RegExp(openingTag + '.*?' + closingTag); // regular expression to find the span tag that will hold the service address
+				html = html.replace(regExp, openingTag + "<p class='text-danger'>" + aAccountDetailInfo[1] + "</p>" + closingTag); // update the span tag with the error message
+				table.cell(cell).data(html).draw(); // update the cell using Datatables API method
+			}
+			idx += 1;
+			continue;
+		}
+		
+		
+		if (document.getElementById(id + j) != null) { // service address
+			// document.getElementById(id + j).innerHTML = aAccountDetailInfo[0];
+			if (aAccountDetailInfo[0].trim().length == 0) {
+				reloadSelectAccount = false; // Do not load account to the dashboard if no service address.
+			}
+			let cell = $("#" + id + j).parent(); // CAP-2048 get the td cell that will contain the service address
+			let html = cell.html(); // get the td cell's inner HTML
+			if (debug == "Y") {console.log(html);}
+			let openingTag = '<span id="' + id + j + '">';
+			let closingTag = '</span>';
+			let regExp = new RegExp(openingTag + '.*?' + closingTag); // regular expression to find the span tag that will hold the service address
+			html = html.replace(regExp, openingTag + aAccountDetailInfo[0] + closingTag); // update the span tag with the service address
+			if (debug == "Y") {console.log(html);}
+			table.cell(cell).data(html).draw(); // update the cell using Datatables API method
+		}
+		if (document.getElementById(id1 + j) != null) { // balance
+			// document.getElementById(id1 + j).innerHTML = aAccountDetailInfo[1];
+			let cell = $("#" + id1 + j).parent().parent(); // CAP-2048 need to go two levels up to reach the td cell
+			let html = cell.html();
+			let openingTag = '<span id="' + id1 + j + '">';
+			let closingTag = '</span>';
+			let regExp = new RegExp(openingTag + '.*?' + closingTag);
+			html = html.replace(regExp, openingTag + aAccountDetailInfo[1] + closingTag);
+			table.cell(cell).data(html).draw();
+		}
+		
+		if (document.getElementById(id3 + j) != null) {
+			// document.getElementById(id3 + j).innerHTML = aAccountDetailInfo[7];
+			let cell = $("#" + id3 + j).parent(); // CAP-2048
+			let html = cell.html();
+			let openingTag = '<span id="' + id3 + j + '">';
+			let closingTag = '</span>';
+			let regExp = new RegExp(openingTag + '.*?' + closingTag);
+			html = html.replace(regExp, openingTag + aAccountDetailInfo[7] + closingTag);
+			table.cell(cell).data(html).draw();
+		}
+		
+		if (document.getElementById(id4 + j) != null) {
+			// document.getElementById(id4 + j).innerHTML = "(" + aAccountDetailInfo[5] + ")";
+			let cell = $("#" + id4 + j).parent(); // CAP-2048
+			let html = cell.html();
+			let openingTag = '<span id="' + id4 + j + '">';
+			let closingTag = '</span>';
+			let regExp = new RegExp(openingTag + '.*?' + closingTag);
+			html = html.replace(regExp, openingTag + aAccountDetailInfo[5] + closingTag);
+			table.cell(cell).data(html).draw();
+		}
+		
+		if (document.getElementById(id5 + j) != null) {
+			// document.getElementById(id5 + j).innerHTML = aAccountDetailInfo[6];
+			let cell = $("#" + id5 + j).parent(); // CAP-2048
+			let html = cell.html();
+			let openingTag = '<span id="' + id5 + j + '">';
+			let closingTag = '</span>';
+			let regExp = new RegExp(openingTag + '.*?' + closingTag);
+			html = html.replace(regExp, openingTag + aAccountDetailInfo[6] + closingTag);
+			table.cell(cell).data(html).draw();
+		}
+		
+		if (document.getElementById(id6 + j) != null) {
+			// document.getElementById(id6 + j).innerHTML = aAccountDetailInfo[8];
+			let cell = $("#" + id6 + j).parent(); // CAP-2048
+			let html = cell.html();
+			let openingTag = '<div id="' + id6 + j + '">';
+			let closingTag = '</div>';
+			let regExp = new RegExp(openingTag + '.*?' + closingTag);
+			html = html.replace(regExp, openingTag + aAccountDetailInfo[8] + closingTag);
+			table.cell(cell).data(html).draw();
+		}
+		
+		if (document.getElementById(id7 + j) != null) {
+			/*
+			if(aAccountDetailInfo[6] != "") { //If ACCMTYP is not empty, it'll pick appropriate image
+				document.getElementById(id7 + j).innerHTML = "<img src='/PortalV4.0/images/"+aAccountDetailInfo[6]+".png' border='0' title='"+aAccountDetailInfo[6]+"' alt='This is a "+aAccountDetailInfo[6]+" service'>";
+			} else {//Check ACCRTL if ACCMTTYP is empty
+				if(aAccountDetailInfo[4] == "HYDRO" && aAccountDetailInfo[3] != "") {
+					document.getElementById(id7 + j).innerHTML = "<img src='/PortalV4.0/images/lightning.png' border='0' title='Electric Meter' alt='This is a an electric service'>";
+				} else if(aAccountDetailInfo[4] == "WATER" && aAccountDetailInfo[3] != "") {
+					document.getElementById(id7 + j).innerHTML = "<img src='/PortalV4.0/images/waterdrop.png' border='0' title='Water Meter' alt='This is a water service'>";
+				} else if(aAccountDetailInfo[4] == "GAS" && aAccountDetailInfo[3] != "") {
+					document.getElementById(id7 + j).innerHTML = "<img src='/PortalV4.0/images/gas.jpg' border='0' title='Gas Meter' alt='This is a gas service'>";
+				}
+			}
+			*/
+			//ACCMTR hyperlink
+			// document.getElementById(id7 + j).innerHTML += " <a href='/app/capricorn?para=selectAccount&userAction=select&inAccountNumber="+aAccountDetailInfo[2]+"&inMeterID="+aAccountDetailInfo[3]+"&meterType="+aAccountDetailInfo[6]+"' alt='Click to select meter' title='Click to select meter' onClick='showProcessingDialog();'>"+aAccountDetailInfo[3]+"</a>";
+			let cell = $("#" + id7 + j).parent(); // CAP-2048
+			let html = cell.html();
+			console.log(html);
+			let openingTag = '<span id="' + id7 + j + '">';
+			let closingTag = '</span>';
+			let regExp = new RegExp(openingTag + '.*?' + closingTag);
+			let innerHtml = "";
+			if(aAccountDetailInfo[6] != "") { //If ACCMTYP is not empty, it'll pick appropriate image
+				innerHtml = "<img src='/PortalV4.0/images/"+aAccountDetailInfo[6]+".png' border='0' title='"+aAccountDetailInfo[6]+"' alt='This is a "+aAccountDetailInfo[6]+" service'>";
+			} else {//Check ACCRTL if ACCMTTYP is empty
+				if(aAccountDetailInfo[4] == "HYDRO" && aAccountDetailInfo[3] != "") {
+					innerHtml = "<img src='/PortalV4.0/images/lightning.png' border='0' title='Electric Meter' alt='This is a an electric service'>";
+				} else if(aAccountDetailInfo[4] == "WATER" && aAccountDetailInfo[3] != "") {
+					innerHtml = "<img src='/PortalV4.0/images/waterdrop.png' border='0' title='Water Meter' alt='This is a water service'>";
+				} else if(aAccountDetailInfo[4] == "GAS" && aAccountDetailInfo[3] != "") {
+					innerHtml = "<img src='/PortalV4.0/images/gas.jpg' border='0' title='Gas Meter' alt='This is a gas service'>";
+				}
+			}
+			html = html.replace(regExp, openingTag + innerHtml + closingTag);
+			table.cell(cell).data(html).draw();
+		}
+		// remove the loading button
+		if (document.getElementById("button_" + id + j) != null) {
+			// document.getElementById("button_" + id + j).style.display = 'none';
+			let cell = $("#button_" + id + j).parent(); // CAP-2048
+			let html = cell.html();
+			let regExp = new RegExp("<button.*?</button>");
+			html = html.replace(regExp, ""); // remove button HTML tag
+			table.cell(cell).data(html).draw();
+		}
+		idx += 1;
+	}
+}
+
+$(document).ready(function(){
+	//fix the issue that changing screen size does not make the account table responsive correctly while account table is collapsed.  
+    $("#collapseListGroup1").on('shown.bs.collapse', function(){
+		$('#accountTableContainer').css("width", "100%");
+		$('#accountTable').dataTable().api().columns.adjust().responsive.recalc();
+    });
+	
+	
+	   
+	 $('#accountTable').dataTable({          
+		responsive: true,
+		"language": {
+			
+			
+        },
+		"bSort": false,		
+		
+		
+		"bInfo": false,
+		"bFilter": false,
+		"bPaginate": false,
+		
+		retrieve: true, // prevent reinitialized error with accountTable
+		"fnDrawCallback": function() {
+			// add aria attribute to datatable to improve accessibility.
+			this.attr("role", "presentation");
+			this.find("thead th").attr("role", "columnheader");
+       		this.find("td").attr("role", "gridcell");
+		}
+	});
+	 
+	
+	$(".refreshAccountButton").attr("href", "/app/capricorn?para=selectAccount&userAction=refresh&inAccountNumber=500087637-100087395&inMeterID=")
+	
+	
+	
+		
+});
+</script>
+			
+		</div>
+		
+		
+		
+		
+		
+			<div id="dbln-tab-content" class="tab-content page-wrapper" 
+					
+					
+			>
+				<div id="mainTabs-dashboard" class="tab-pane active" role="tabpanel">
+				
+				
+				
+					
+					
+					
+					<div class='alert alert-info alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>�</span></button><h4>Welcome to MyAccount Dashboard.</h4>A convenient way to check on your account details and information that matters. Alerts, recent usage and bill details allow you to monitor your usage and control your utility bill costs.</div>
+					
+					<div class="row">
+						<div class="col-md-5 col-lg-4">
+						
+							
+
+
+
+<h4>Account Details</h4>
+<div id="accountDetailSection" class="panel panel-default">
 	
 		
 		
-		    
+	    
+		
 			
-			
-					<!-- Login Panel -->
-					<div class="col-md-6">
-						<h3 id="login_heading"><i class="fa fa-lock" aria-hidden="true"></i> My Account Login</h3>
-						<div class="well">
-							<form id="login-form" role="form" name="login" method="post" action="/app/capricorn?para=index">
-								<input type="hidden" name="jspCSRFToken" value="4eb56ad0785b68f39828ada7a04b06e70e2185fd" />
-								<div class="capricorn-login-form-group form-group">
-									<label for="accessCode" class="control-label">Username</label>
-									<div class="controls"> <input type="text" class="form-control" id="accessCode" name="accessCode" autocorrect="off" autocapitalize="none" placeholder="Username"> </div>
-								</div>
-								<div class="capricorn-login-form-group form-group">
-									<label for="password" class="control-label">Password</label>
-									<div class="input-group">
-										<input type="password" class="form-control" id="password" name="password" maxlength="60" placeholder="Password" autocomplete="new-password">
-										<span id="show_pass_btn" toggle="#password" class="input-group-addon toggle-password" style="cursor: pointer;"><i class="fa fa-eye"></i></span>
-									</div>
-								</div>
-								
-			
-								<div class="form-actions">	
-									<button type="submit" class="pull-right btn btn-primary btn-lg" id="login_btn">Login <span class="glyphicon glyphicon-log-in"></span></button>
-								</div>
-								<div class="checkbox" style="max-width: 50%;">
-									<label> 
-										<input type="checkbox" title="rememberMyAccountNumber" name="rememberMyAccountNumber" class="" value="Y" /> Remember me  
-									</label>
-								</div>
-			
-								<div><a href="https://www.emwd.org/contact-us" target="_blank" id="capricorn-login-help-link">Need help logging in?</a></div>
-								<hr>
-								
-								<div class="form-actions">	
-									<a href="/app/capricorn?para=quickPay" type="button" class="pull-right btn btn-success btn-lg" id="quick-pay-button" >Quick Pay <span class="glyphicon glyphicon-credit-card"></span></a>
-								</div>
-								
-								<div class="capricorn-login-form-group">
-									<div><a id="capricorn-forgot-password-link" href="/app/forgotPassword.jsp">Forgot your password?</a></div>
-									<div><a id="capricorn-forgot-user-link" href="/app/forgotAccessCode.jsp">Forgot your username?</a></div>
-									
-								</div>
-								
-								<input type="hidden" name="nextPara" value="" />
-								<input type="hidden" name="nextPara_attr1" value="" />
-							</form>				
-						</div>			
+		
+		<div class="panel-body" style='padding:0'>
+		
+			<div id='cap_table_account_ribbon' class='cap-table'>
+				<div class='cap-table-body'>
+				
+				
+					
+					<div class='cap-table-row'>
+						<div class='cap-table-cell'>
+							<strong>Nickname: </strong>
+						</div>
+						<div class='cap-table-cell'>
+							Charentes
+						</div>
+					</div>
+				
+				
+					
+					<div class="cap-table-row">
+						<div class='cap-table-cell'>
+					 		<strong>Address: </strong>
+					  	</div>
+					  	<div class='cap-table-cell'>
+					    	33103 CHARENTES CT, WINCHESTER, CA  92596
+					  	</div>
 					</div>
 					
-					<!-- Signup Panel -->
-					<div class="col-md-6">
-						<h3 id="login_register_heading"><i class="fa fa-plus-square" aria-hidden="true"></i> Register</h3>
-						<div class="well">
-							<p>Creating a username gives you access to your account details as well as water usage information.</p>
+					
+				  	
+					
+					
+					
+					
+					<div class="cap-table-row">
+						<div class='cap-table-cell'>
+					 		<strong>Name: </strong>
+					  	</div>
+					  	<div class='cap-table-cell'>
+					    	TAYLOR L BIRD
+					  	</div>
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+						
+					
+					
+						
+						<div class="cap-table-row">
+							<div class='cap-table-cell'>
+						 		<strong>Current Bill:</strong>
+						  	</div>
+						  	<div class='cap-table-cell' id='showCurrentBillFromBillMst'>
+						    	
+							    	$177.91
+							    	   
+						         	<span>due Aug 21, 2025</span>
+						         
+							    	
+							    
+						  	</div>
+						</div>
+						
+					
+							
+					
+					<div class="cap-table-row">
+						<div class='cap-table-cell'>
+					 		<strong>Balance: </strong>
+					  	</div>
+					  	<div class='cap-table-cell' id='dashboardMyAccountsShowBalances'>
+					    	
+						         $177.91 
+						         
+						    
+					  	</div>
+					</div>
+					
+					
+					
+					
+					
+				  	
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+																		
+					
+					
+										
+					
+					
+					
+						<div class="cap-table-row">
+							<div class='cap-table-cell'>
+						 		<strong>Pay Plan:</strong>
+						  	</div>
+						  	<div class='cap-table-cell'>
+						    	Auto Payments
+						  	</div>
+						</div>
+					
+					
+										
+					
+					
+										
+																				
 
-<ul style="list-style:none;">
-	<li><i class="fa fa-bar-chart" aria-hidden="true"></i> - View your water usage data </li>
-	<li> <i class="fa fa-file-pdf-o" aria-hidden="true"></i> - View and pay your bills online </li>
-	<li><i class="fa fa-user" aria-hidden="true"></i> - Add multiple accounts to your web profile</li>
-</ul>
-<br>
-<p>Before you get started, please have your most recent bill available to complete the registration form.</p>
-
-							<hr>
-							<form role="form">
-								<div class="button-set clearfix">
-									<a href="register.jsp" type="button" class="pull-right btn btn-primary btn-lg" id="capricorn-login-signup">Register Now <span class="glyphicon glyphicon-check"></span> </a>
-								</div>
-							</form>
-						</div>		
+					
+					
+					
+					
+				
+							
+					
+		  			
+		 			
+					
+					
+					 
+							
+							
+					
+					
+					
+					
+									  
 					</div>
 				
+				</div>
 			
+			
+		</div>
+			</div>
+
+	
+
+
+														
+							 
+
+
+
+
+
+
 				
+		<h4>Total Balance</h4>
+		<div class="panel capricorn-selected-panel">
+		  <div class="panel-heading">
+		  	
+		  		
+		  			Amount:
+		  		
+		  		<strong>
+		  			<span id='my_account_current_balance'>
+		  			</span>
+		  		</strong>			
+		  	
+		  	
+		   </div>
+		<div id='my_current_bill_panel_container'>
+			<div class="loadingPaneContent" style="text-align: center;padding: 15px 0;">
+				<img alt="loading_icon" src="/PortalV4.0/images/spin_loading_24x24.gif" /> 
+				Retrieving your data... 
+			</div>		  
+		</div>
+		
+		
+		 
+		 
+		 	<div id="paymentExtensionWidgetContainer"></div>
+  		 
+	</div>
+
+<script>
+$(document).ready(function(){
+	$.get({
+    	url:'/app/Widgets/ajaxMyCurrentBill.jsp',
+    	cache: false
+    }).then(function(data) {
+    	$('#my_current_bill_panel_container').html(data);
+    });
+	
+	
+	
+		$.ajax({type:"GET",
+			cache: false,
+			url:'/app/Widgets/paymentExtensionWidget.jsp',
+		}).done(function(data){
+			$('#paymentExtensionWidgetContainer').html(data);
+		}); 
+	
+});
+</script>
+
+		
+	 
+							 
+							 
+						
+							
+							
+							
+							
+							
+							
+							
+							
+								
+
+
+
+
+
+
+<div id="toBeBlanked">
+
+<h4>My Water Usage Activity 
+	<img class='ajaxTouUsageAlert-img' src="/PortalV4.0/images/Help.png" 
+		title="My Water Usage Activity" 
+		alt="<strong>Current Charges:</strong> Represents your raw time of use consumption cost without delivery charges, loss factor adjustments, etc.<br><strong>Predicted Charges:</strong> Represents the daily average cost of your Current Charges, multiplied across the days left in your billing period.<br>The billing period is estimated based on your previous meter reading number of days.<br><strong>Usage Alerts:</strong> You have the ability to setup an email alert if the predicted charges exceed a specified dollar value." />
+</h4>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+ 	<div id="mySmartMeterActivityPortlet">
+   	   	  <ul class="nav nav-tabs" role="tablist" id="mySmartMeterActivityTabs">
+			 
+		   	 
+			 		
+	    		 <li role="presentation" class="active">
+	    		 	<a href="#WATSMCON-pane" aria-controls='<i class="fa fa-tint"></i> Water' role="tab" data-toggle="tab" data-tab=WATSMCON>
+	    		 	<i class="fa fa-tint"></i> Water</a>
+	    		 </li>
+			 
+		  </ul>
+
+		  
+ 		  <!-- Tab panes -->
+	  	  <div class="tab-content">
+ 		  	
+		  
+	    		<div role="tabpanel" class="tab-pane fade in active" id="WATSMCON-pane">
+	    			<div style="text-align: center;" class="loadingPaneContent">
+	    				<img alt="loading_icon" src="/PortalV4.0/images/spin_loading_24x24.gif" /> Retrieving your data... 
+	    			</div>
+	    		</div>
+	    		
+	    	 
+	    	</div>
+	    	<!-- ./tab-content -->
+		</div>
+	</div>
+</div>
+</div>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function() { 
+		
+		
+        // load tab remotely
+	    $(document).on('shown.bs.tab', '#mySmartMeterActivityTabs [data-toggle="tab"]', function(e) {
+		    var $this = $(this),
+		    smartMeterTab = $this.data('tab'),
+		    $target = $($this.attr('href')),
+		    loadingTabPane = $target.has('.loadingPaneContent');
+		    
+		 	// load the content remotely only if it has the loadingPaneContent element inside. Once the tab is loaded, loadingPaneContent element will be replaced.
+		 	// Thus, it will not reload remotely again in tab showing event.
+		    if(loadingTabPane.length > 0){  
+				loadAjaxTouUsageAlertCalc(smartMeterTab, $target);
+		    }
+	    });
+		
+	    //$('#recentUsageTabs a[data-toggle="tab"]:last').tab('show');
+	    function loadAjaxTouUsageAlertCalc(smartMeterTab, $target){
+	    	var ajaxURL = "/app/capricorn?para=ajaxUsageAlertCalc&account=500087637-100087395&smartMeterOptionCode="+smartMeterTab;
+			var con = "#mySmartMeterActivityPortlet";
+			var toBe = "#toBeBlanked"
+			$.ajax({type:"get",
+					cache: false,
+					url:ajaxURL,
+					success: function(data){
+						$target.html(data);		
+					}
+			}).done(function(){
+				// Note: the following ajax call is for My Alerts widget (alertWidgetContainer.jsp), ideally it should be placed there.
+				// However the logic for usage and alert calculations are mixed together in this My Consumption widget backend (AjaxTouUsageAlertCalc.java), so it ends up here.
+				
+					// #330-447 
+					// Pass inquiry type to the handler
+					var inqType = 'Water';
+					//if(smartMeterTab == 'SMCONSUM'){
+					//	inqType = 'Electric';
+					//}else{
+					//	inqType = 'Water';
+					//}
+					
+					
+					var ajaxURL1 = "/app/capricorn?para=ajaxMyUsageAlertsCalc&inquiryType="+inqType;
+					var con1 = "#myUsageAlertPortlet"; 	
+					$.ajax({type:"get",
+						cache: false,
+						url:ajaxURL1,
+						success: function(data){
+								$(con1).html(data);
+						}
+					});
+					
+					
+				
+			}); 
+	    }
+	    
+	    $target = $("#WATSMCON-pane");
+	    loadAjaxTouUsageAlertCalc("WATSMCON", $target);
+	    
+	});
+
+</script>
+							
+							
+							
+							
+		
+							
+							
+							
+				  	
+						  	
+							
+					
+							
+						  	
+							
+							
+							
+							
+
+
+<div id="myConsumptionChart-dashboard">
+	
+	
+	
+	<h4>My Consumption</h4>
+	<div class="panel panel-default">
+		<div class="panel-body">				
+				<ul class="nav nav-tabs" role="tablist" id="consumptionChartTabs">
+				
+			  	 	 	<li role="presentation" class="active ">
+			  	 	 		<a href="#tabpane-water-consumptionUsage" role="tab" data-toggle="tab" aria-expanded="true" data-inquirytype="water" data-optioncode="WATERCON"><i class="fa fa-tint"></i> Water</a>
+			  	 	 	</li>
+				 
+			</ul>
 			
-			
+				<!-- Tab panes -->
+				<div id="consumptionChartTabContents" class="tab-content">
+					
+					<div role="tabpanel" class="tab-pane fade in active" id="tabpane-water-consumptionUsage">
+						<div style="text-align: center;"><img alt="loading_icon" src="/PortalV4.0/images/spin_loading_24x24.gif" /></div>
+					</div>
+				 
+				</div>
+		  		<!-- ./tab-content -->
+		</div>
+	</div>
+</div>
+
+<script>
+$(document).ready(function(){
+	   
+        // load tab remotely
+	    $(document).on('shown.bs.tab', '#consumptionChartTabs [data-toggle="tab"]', function(e) {
+		    var $this = $(this),
+		    inquiryType = $this.data('inquirytype'),
+		    optionCode = $this.data('optioncode'),
+		    $target = $($this.attr('href'));
+			var $targetTabPane = $('#tabpane-'+inquiryType+'-consumptionUsage');
+		   	ajaxLoadConsumptionData(inquiryType, $targetTabPane);
+	    });
+        
+	    function ajaxLoadConsumptionData(inquiryType, $target){
+	    	var consumptionDataAjaxURL = "/app/capricorn?para=consumptionInquiry&inquiryType="+inquiryType+"&formAction=ajaxLoadFromDash";
+			$.get({
+				url:consumptionDataAjaxURL,
+				cache: false
+			}).then(function(data) {
+				$target.html(data);
+			});	    	
+	    }
+	    
+	    // ajax load the first tab initially.
+	    var $defaultTargetTabPane = $("#tabpane-water-consumptionUsage");
+	    ajaxLoadConsumptionData("water", $defaultTargetTabPane);
+	    
+	
+}); 
+</script>
+							
+						
+					
+							
+							
+							
+						</div> <!-- END of Left Dashboard Column -->
+						<!-- Start of Right Dashboard Column -->	
+						<div class="col-md-7 col-lg-8"> 
+														
+							
+							
+				
+							
+							
+								
+
+
+
+<div id="alertContainer" data-totalalerts="0" data-alertchecks="0">
+	<h4>My Alerts <span class="badge" style="position: relative; top: -1px;"><span id="numOfAlerts">0</span></span></h4>
+	<div class="panel panel-default">
+	
+		
+		
+		<div id="billerMessagesAlertWidget" style="display:none;">
+			<div id=billerMessagesAlertTitle></div>
+			<div id=billerMessagesAlertContainer></div>
+		</div>
+		
+
+	  	
+		
+						
+		
+		
+		
+		
+
+		
+		
+			<div id="waterBudgetAlertWidget"></div>
+		
+
+		
+		
+			<div id="waterLeakAlertWidget"></div>
+		
+
+		
+		
+		
 		
 	
+		
+		
+			<div id="waterInfractionAlertWidget">
+				<div id="waterInfractionAlertTitle"></div>
+				
+				<div id="currentWaterInfractionsContainer"></div>
+				
+				
+			</div>
+		
+	
+	</div>
+</div>
+
+<script>
+$(document).ready(function(){
 	
 	
-	</div> <!-- ./row -->
+	
+		getBillerMessages();
 	
 	
 	
+	
+	// 330-594 Call irrigation handler if irrigation control is turned on
+	
+	
+	
+	
+	
+		getCurrentWaterInfractions();
 	
 
 	
-	<div class="row" style="margin-top:12px;">
-	<div class="col-md-6">
-		<div class="well">
-			<h3 style="margin-top:0;">Are you a new customer?</h3>
-			<h4>Fill out our online <a href="../ApolloWE/ctl?para=publicRequest&workflowProcess=CAUV2&WE_LANG=EN" target="newApp">Application for New Service</a></h4>
+	
+	
+		getWaterBudgetAlerts();
+	
+
+	
+		getWaterLeakAlerts();
+	
+
+});
+
+
+
+
+function getBillerMessages(){
+	var ajaxURL = "/app/capricorn?para=ajaxGetBillerMessages";
+	var billerMessagesAlertTitle = "<strong><i class='fa fa-bell-o'></i> Billing Messages</strong>";
+	$.ajax({type:"get",
+		cache: false,
+		url:ajaxURL,
+		success: function(data){
+			if(data.trim().length>0) {
+				$('#billerMessagesAlertTitle').html(billerMessagesAlertTitle);
+				$('#billerMessagesAlertWidget').show();
+			}
+			$('#billerMessagesAlertContainer').html(data);
+		}
+	})	
+}
+
+
+
+//Ajax call to check the account outage and show the alert message if any.
+// 400-134 pass flag to the handler to indicate the tab the handler was called from
+// @param isOutageTab set Y if it sending from outage page and set N if any other page
+// @param outageAlertBoxId contains alert box id where response data can be set. e.g. outageAlertWidget
+function checkOutageAlert(isOutageTab, outageAlertBoxId){
+	if (isOutageTab === undefined || isOutageTab === 'N' || isOutageTab === ''){
+		isOutageTab = '';
+	} else {
+		isOutageTab = "&fromOutageTab="+isOutageTab;
+	}
+	var outageAlertAjaxURL = "/app/capricorn?para=ajaxCheckOutage"+ isOutageTab;
+	$.ajax({type:"get",
+		cache: false,
+		url: outageAlertAjaxURL,
+		data: {
+			formAction: "checkAccountsOutage",
+			outageAlertWidgetId: outageAlertBoxId
+		}
+	}).done(function(data){
+		var $outageAlertWidget = $('#'+outageAlertBoxId);
+		if($outageAlertWidget.length > 0){
+			$outageAlertWidget.html(data);
+		}
+	});
+}
+
+
+//Run this function when a kind of alert has been checked.
+//It will add 1 to the alertchecks data (i.e. a checking counter for different kinds of alerts), and # of alerts to totalalerts data (i.e. a total number of alerts).
+function alertCheck(numOfOutageAlerts) {
+	var $alertContainer = $("#alertContainer");
+	var numOfCurrentAlerts = $alertContainer.data("totalalerts");
+
+	// add the alerts number to the total number of alerts of all kinds.
+	var totalAlerts = eval(numOfOutageAlerts + "+" + numOfCurrentAlerts);
+	$alertContainer.data("totalalerts", totalAlerts);
+
+	// Show the total # of alerts beside the widget title.
+	$("#numOfAlerts").text(totalAlerts);
+
+	// Check how many kinds of alerts have been checked.  Append the current alert check to the data.
+	// Note: There are 2 kinds of alert checks currently, i.e. outage and TOU usage.
+	var numOfAlertCheck = $alertContainer.data("alertchecks"); // get the current # of different alerts that have been checked.
+	numOfAlertCheck += 1; // add 1 to the alert check counter as the outage alert has been checked.
+	$alertContainer.data("alertchecks", numOfAlertCheck);
+
+	// remove the container if all kinds of alerts have been checked (i.e. "alertchecks" is 2), and there is no alert at all (i.e. "totalalerts" is 0).
+	// check this every time when the alertCheck function is executed.
+	// 2018-04-19 DM - 330-115: The following logic does not work. It hides the alert div even when there are alerts to show.
+	//                Disabled for now until we get it working correctly
+	//alert("numOfOutageAlerts:" + numOfOutageAlerts);
+	//alert("numOfCurrentAlerts:" + numOfCurrentAlerts);
+	//if(numOfAlertCheck == 2 && totalAlerts == 0){
+	//	$alertContainer.remove();
+	//}
+}
+
+
+
+
+//Ajax call to check the water budget alerts and show the alert message if any.
+function getWaterBudgetAlerts() {
+    var waterBudgetAlertAjaxURL = "/app/capricorn?para=ajaxGetWaterBudgetAlerts"; 
+    var waterBudgetAlertTitle = "[selectAccount_titleWaterBudgetAlert]"; 
+    $.ajax({type: "get",
+		cache: false,
+		url: waterBudgetAlertAjaxURL,
+		data: {
+			formAction: "getWaterBudgetAlerts"
+		},
+        success: function(data){
+   			var $waterBudgetAlertWidget = $('#waterBudgetAlertWidget');	
+   			$waterBudgetAlertWidget.html(data);
+    	}
+    });
+}
+
+
+
+	//Ajax call to check the water leak alerts and show the alert message if any.
+	function getWaterLeakAlerts() {
+	    var waterLeakAlertAjaxURL = "/app/capricorn?para=ajaxGetWaterLeakAlerts"; 
+	    var waterLeakAlertTitle = "[selectAccount_titleWaterLeakAlert]"; 
+	    $.ajax({type: "get",
+			cache: false,
+			url: waterLeakAlertAjaxURL,
+			data: {
+				formAction: "getWaterLeakAlerts"
+			},
+	        success: function(data){
+	   			var $waterLeakAlertWidget = $('#waterLeakAlertWidget');	
+	   			$waterLeakAlertWidget.html(data);
+	    	}
+	    });
+	}
+
+
+//330-594 Call irrigation handler if irrigation control is turned on
+function getAccountIrrigationInfo(){
+	var ajaxURL = "/app/capricorn?para=ajaxIrrigationInfo&account=500087637-100087395";
+	var irrigationWidget = "#irrigationWidget";
+	$.ajax({type:"get",
+			cache: false,
+			url:ajaxURL,
+			success: function(data){
+				$(irrigationWidget).html(data);
+				
+			}
+	})
+}
+
+
+function getCurrentWaterInfractions() {
+    var waterInfractionsAlertAjaxURL = "/app/capricorn?para=ajaxGetWaterInfractions"; 
+    var waterInfractionAlertTitle = "<strong>Water Infraction</strong>"; 
+    $.ajax({type: "get",
+		cache: false,
+		url: waterInfractionsAlertAjaxURL,
+		data: {
+			formAction: "checkCurrentInfractions"
+		},
+        success: function(data){
+   			if(data.length>6) {
+   				$('#waterInfractionAlertTitle').html(waterInfractionAlertTitle);
+   			}
+   			var $waterInfractionAlertWidget = $('#currentWaterInfractionsContainer');	
+   			$waterInfractionAlertWidget.html(data);
+    	}
+    });
+}
+
+
+
+
+</script>
+							
+		
+							
+							
+							
+							
+								
+
+
+
+<div id="recentUsageContainer">
+	<h4>My Recent Usage</h4>	
+		<div class="panel panel-default">
+		 	<div class="panel-body">				
+				<ul class="nav nav-tabs" role="tablist" id="recentUsageTabs">
+				
+			  	 	 	<li role="presentation" class="active ">
+			  	 	 		<a href="#tabpane-WATERCON-recentUsage" role="tab" data-toggle="tab" aria-expanded="true" data-inquirytype="water"><i class="fa fa-tint"></i> Water</a>
+			  	 	 	</li>
+				 
+				 
+				</ul>
+		  
+				<!-- Tab panes -->
+				<div id="recentUsageTabContents" class="tab-content">
+					
+					<div role="tabpanel" class="tab-pane fade in active" id="tabpane-WATERCON-recentUsage">
+						<div class="loadingPaneContent" style="text-align: center;"><img alt="loading_icon" src="/PortalV4.0/images/spin_loading_24x24.gif" /> Retrieving your data... </div> 
+						</div>
+				 		 
+				</div>
+		  		<!-- ./tab-content -->
+		  
+		    
+			<div class="pull-right">
+				<a type="button" class="btn btn-link compare-details-link" href="javascript:void(0);" onclick="viewCompareLastBill();" aria-label="Compare Usage Link">
+				<i class="fa fa-chevron-right fa-2x"></i></a>
+			</div>	  
+			
+			<div class="compare-value-text">
+				View History
+			</div>
+			<div class="compare-comment-text">
+				See how you compared in previous billing periods
+			</div>
 		</div>
+	</div>
+</div>
+ 
+		    
+
+
+
+
+      
+<script type="text/javascript">
+   
+   $(document).ready(function() { 
+	    
+	   
+        // load tab remotely
+	    $(document).on('shown.bs.tab', '#recentUsageTabs [data-toggle="tab"]', function(e) {
+		    var $this = $(this),
+		    inquiryType = $this.data('inquirytype'),
+		    $target = $($this.attr('href')),
+		    loadingTabPane = $target.has('.loadingPaneContent');
+		    
+		 	// load the content remotely only if it has the loadingPaneContent element inside. Once the tab is loaded, loadingPaneContent element will be replaced.
+		 	// Thus, it will not reload remotely again in tab showing event.
+		    if(loadingTabPane.length > 0){  
+				ajaxLoadCompareLastBillSummary(inquiryType, $target);
+
+		    }
+	    });
+		
+	    // a helper method to ajax load the Compare Last Bill for the inquiry type(1st parameter) and show the content in the target (2nd parameter) element. 
+	    function ajaxLoadCompareLastBillSummary(inquiryType, $target){
+	    	var recentUsageAjaxURL = "/app/capricorn?para=usageCompareLastBill" 
+	    				+ "&formAction=ajaxLoadDetails&inquiryType="+inquiryType 
+	    				+ "&combineMeterId=true" 
+	    				+ "&combineBP=N" 
+	    				+ "&checkCT=Y" 
+		    
+	    	// IE 11 fix - prevents browser from storing get response to cache
+	    	$.get({
+		    	url:recentUsageAjaxURL,
+		    	cache: false
+		    }).then(function(data) {
+		    	$target.html(data);
+		    });
+	    	 
+		    /* $.get(recentUsageAjaxURL, function(data) {
+		    	$target.html(data);
+		    }); */
+	    }
+	    
+	    // ajax load the first tab initially.
+	    var $defaultTargetTabPane = $("#tabpane-WATERCON-recentUsage");
+	    ajaxLoadCompareLastBillSummary("water", $defaultTargetTabPane);
+	    
+	    
+	});
+   
+ 	//Process Dashboard View More in CompareLastBill widget
+   	function viewCompareLastBill() {
+     	
+     		loadTabFrame(tabComparisonId,'/app/capricorn?para=usageCompareLastBill&tab=bilCons','Y');
+     		$tabAreaComparison.tab('show');
+     	
+   	}	
+</script>
+		  						
+		
+							
+							
+							
+							 
+		
+							
+							
+							
+							
+								
+			
+							
+							
+							
+							
+								
+
+
+
+<div style="display:inline;float:right;padding-top:8px;padding-right:6px;"><a href="#" onclick="transactionsLink();">View All</a></div>
+<h4>My Recent Account Activity</h4>
+<div class="panel panel-default">
+  <div class="panel-body">
+
+  	<div class="">
+  		<div class="datatable-container" id="tranxTableContainer">		
+			<table id="tranxTable" width="100%" class="table table-striped table-bordered table-hover" >
+		  		<thead>
+			  		<tr>
+			  			
+			          	
+							 	<th style="text-align: center;"> Date</th>
+						
+							 	<th style="text-align: center;"> Description</th>
+						
+							 	<th style="text-align: center;"> Amount</th>
+						
+							 	<th style="text-align: center;"> Balance</th>
+							
+			  		</tr>
+			  	</thead>
+			  	<tbody>
+			  		
+				     		
+			          		  <tr>
+					          	
+				              		<td>Aug 01, 2025</td>
+				              	
+				              		<td>REGLR Bill Charges</td>
+				              	
+				              		<td><div style="text-align: right">$177.91</div></td>
+				              	
+				              		<td><div style="text-align: right">$177.91</div></td>
+				              
+				              </tr>
+				    
+				     		
+			          		  <tr>
+					          	
+				              		<td>Jul 22, 2025</td>
+				              	
+				              		<td>Payment - MyAccount Bank Account</td>
+				              	
+				              		<td><div style="text-align: right">$-123.38</div></td>
+				              	
+				              		<td><div style="text-align: right">$0.00</div></td>
+				              
+				              </tr>
+				    
+				     		
+			          		  <tr>
+					          	
+				              		<td>Jul 01, 2025</td>
+				              	
+				              		<td>REGLR Bill Charges (Paid late)</td>
+				              	
+				              		<td><div style="text-align: right">$123.38</div></td>
+				              	
+				              		<td><div style="text-align: right">$123.38</div></td>
+				              
+				              </tr>
+				    
+				     		
+			          		  <tr>
+					          	
+				              		<td>Jun 24, 2025</td>
+				              	
+				              		<td>Payment - MyAccount Bank Account</td>
+				              	
+				              		<td><div style="text-align: right">$-171.92</div></td>
+				              	
+				              		<td><div style="text-align: right">$0.00</div></td>
+				              
+				              </tr>
+				    
+				     		
+			          		  <tr>
+					          	
+				              		<td>Jun 02, 2025</td>
+				              	
+				              		<td>REGLR Bill Charges (Paid late)</td>
+				              	
+				              		<td><div style="text-align: right">$171.92</div></td>
+				              	
+				              		<td><div style="text-align: right">$171.92</div></td>
+				              
+				              </tr>
+				    
+			  	</tbody>
+			</table>
+		</div> <!-- ./datatable-container -->
+	</div>
+
+
+  </div> <!-- ./panel body -->
+</div>					
+							
+		
+							
+							
+							
+								<!-- Carousel Slider Section Starts -->
+								
+
+
+
+<div class="panel panel-default">
+	<div class="slider">
+		<div id="dashboard-right-carousel" class="carousel slide-dashboard-right" data-ride="carousel"></div>
 	</div>	
-	<div class="col-md-6">
-		<div class="well" style="min-height:122px;">
-			<h4><i class="fa fa-tint" aria-hidden="true"></i> <a href="../ApolloWE/ctl?para=publicRequest&workflowProcess=RUV1&TYPE=PUBLIC&WE_LANG=EN" target="abuseForm">Report Water Waste</a></h4>
-		</div>
-	</div>
 </div>
-<div class="row" style="margin-bottom:12px;">
-	<div class="col-md-4 center-text" style="background-color:#5cb85c;color:#FFF;padding:24px;">
-		<a href="https://www.emwd.org/stay-waterwise" style="color:#FFF;" target="_blank">
-		<i class="fa fa-leaf fa-2x" aria-hidden="true"></i><br>
-		Stay WaterWise
-		</a>
-	</div>
-	<div class="col-md-4 center-text" style="background-color:#00A9E0;color:#FFF;padding:24px;">
-		<a href="https://www.emwd.org/rates-and-fees" style="color:#FFF;" target="_blank">
-		<i class="fa fa-table fa-2x" aria-hidden="true"></i><br>
-		Water Budgets & Rates
-		</a>
-	</div>
-	<div class="col-md-4 center-text  " style="background-color:#1a2f97;color:#FFF;padding:24px;">
-               <a href="https://www.emwd.org/payment-assistance-programs" style="color:#FFF;" target="_blank">
-               <i aria-hidden="true" class="fa fa-medkit fa-2x"></i><br />
-               Payment Assistance Programs </a></div>
-			   
+    
+<script>
+$(document).ready(function(){  
+	$('#dashboard-right-carousel').load('https://myaccount.emwd.org/app/includeCarousel.jsp?&page=dashboardRight&container=dashboard-right-carousel&type=EN'); 
+});
+</script>
+								<!-- Carousel Slider Section Ends -->
+							
+						
+						</div>
+					</div>
+					
+					
+					
+					
+						
 
-  </div>
 
-	
 
-	
-	
-		<div class="text-center">
-			 	<a href="#" class="btn btn-default btnSwitchLanguage"> Espa�ol </a>
+<div class="container-fluid pageCommentsAndRating" id="pageCommentsAndRating">
+	<hr />
+	<div class="row">
+		<div><input id="documentId" name="documentId" type="hidden" value="DASHBRD" /></div>
+		
+		
+		
+		<div class="col-sm-8">
+			<form id="pageCommentForm">
+				<div class="input-group">
+					<div class="input-group-addon">
+						<span class="glyphicon glyphicon-comment"></span>
+					</div>
+					<input class="form-control" id="input-pageComment" maxlength='1024' title="Rating Comment" name="ratingComment" placeholder="We welcome your comments and feedback" type="text" /> 
+					<span class="input-group-btn">
+						<button class="btn btn-default" id="pageCommentButton" name="pageCommentButton" type="button" aria-labelledby="input-pageComment">
+							<span class="glyphicon glyphicon-ok"></span> 
+						</button> 
+					</span>
+				</div>
+				
+				<!-- /input-group -->
+				<div id="commentsResponse"></div>
+				<input type="hidden" name="jspCSRFToken" value="9e826cd1955fbad1b0196386860af4f2f0c3ba58" />
+			</form>
 		</div>
+		
+		<div class="col-sm-4">
+			<div class="star-rating"><span class="star-rating-label  ">Rate this page</span> 
+				<span class="fa fa-star-o" data-rating="1"></span> 
+				<span class="fa fa-star-o" data-rating="2"></span> 
+				<span class="fa fa-star-o" data-rating="3"></span> 
+				<span class="fa fa-star-o" data-rating="4"></span> 
+				<span class="fa fa-star-o" data-rating="5"></span> 
+				<input class="rating-value" id="input-pageRating" name="pageRating" type="hidden" />
+			</div>
+			<div class="text-right" id="ratingResponse"></div>
+		</div>
+		
+		
+	</div> <!-- ./row -->
+</div> <!-- ./Page Comments & Rating -->
+
+
+
+					
+				
+				</div> 
+				
+				
+
+
+
+     
+	<div id="mainTabs-dashboard" role="tabpanel" class="tab-pane dbln-tab" data-opttar="" 
+			data-src="/app/capricorn&tab=DASHBRD"></div>
+     
+	<div id="tabs-BILLINQ" role="tabpanel" class="tab-pane dbln-tab" data-opttar="" 
+			data-src="/app/capricorn?para=billInquirySelect&tab=BILLINQ"></div>
+     
+	<div id="tabs-PAYHIST" role="tabpanel" class="tab-pane dbln-tab" data-opttar="" 
+			data-src="/app/capricorn?para=paymentHistoryInq&tab=PAYHIST"></div>
+     
+	<div id="tabs-CONSUMPTION" role="tabpanel" class="tab-pane dbln-tab" data-opttar="" 
+			data-src="/app/capricorn?para=consumptionInquiry&inquiryType=water&report=WATCONRP&tab=WATERCON"></div>
+     
+	<div id="tabs-WATSMCON" role="tabpanel" class="tab-pane dbln-tab" data-opttar="" 
+			data-src="/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON"></div>
+     
+	<div id="tabs-bilCons" role="tabpanel" class="tab-pane dbln-tab" data-opttar="" 
+			data-src="/app/capricorn?para=usageCompareLastBill&tab=bilCons"></div>
+     
+	<div id="tabs-SERVCREQ" role="tabpanel" class="tab-pane dbln-tab" data-opttar="" 
+			data-src="/app/capricorn?para=paymentHistoryInq&type=ServiceRequest&tab=SERVCREQ"></div>
+     
+	<div id="tabs-MYACCT" role="tabpanel" class="tab-pane dbln-tab" data-opttar="" 
+			data-src="/app/capricorn?para=myAccount&tab=MYACCT"></div>
+     
+	<div id="tabs-AWEFORMS" role="tabpanel" class="tab-pane dbln-tab" data-opttar="" 
+			data-src="/app/apolloForms.jsp?id=0&tab=AWEFORMS"></div>
 	
+				
+			</div> 
+		</div>
+	</div> 
 
 
-</div>
-<!-- ./container -->
 
 
 
@@ -322,7 +2095,30 @@
 
 
 
-
+<div id="modal-leakageAnalysis" tabindex="-1" class="modal fade" data-backdrop="static" role="dialog" aria-labelledby="btn-viewLeakAnalysis">
+	<div class="modal-dialog modal-lg scrollable-modal-dialog">
+		 <div class="modal-content modal-lg">
+	            <div class="modal-header">
+		            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		            	<span aria-hidden="true">&times;</span>
+		            </button>
+		            <h4 class="modal-title" id="leakAnalysisModalTitle">
+		            	<strong>My Leakage Analysis</strong></h4>
+	            </div>
+	            
+	            <div class="modal-body scrollable-modal-body" id="modal-leakageAnalysisContent">
+	 			</div>
+	 			
+	 			<div class="modal-footer">
+	 				
+					<button type="button" class="btn btn-default" id="btnCloseModal-leakageAnalysis" data-dismiss="modal"
+						aria-label="Close">
+						Close</button>
+	            </div>
+	            
+	    	</div>
+	</div>
+</div>
 
 
 
@@ -997,189 +2793,569 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 
 
 
-<!-- Script to Activate the Carousel -->
-<script type="text/javascript">
-$('.carousel').carousel({
-	interval: 5000 //changes the speed
-})
-</script>
 
-<script type="text/javascript">
-	
-	
-	// +---------------------------------------------------------------------
-	// | Auto Refresh: 330-263 
-	// +---------------------------------------------------------------------
-	var itimer;
-	var timeInterval;
-	
-	function set_interval() { 
-		var timeoutMins = 1000 * 1 * 300; 
-		itimer=setTimeout("auto_reload()",timeoutMins);
-	}
-	
-	function auto_reload() {
-	  location.replace('/app/login.jsp');
-	}
-	// +---------------------------------------------------------------------
-		
-	
-	function initFields() {
-	   	var form = document.login;
-		form.accessCode.focus();
-		form.accessCode.select();
-		
-		set_interval();
-		
-	}
-	
-	function processRememberMyAccountNumber() {
-	  // if rememberMyAccountNumber flag is check, then write the account# to the PowerStream cookie
-	  if (document.login.rememberMyAccountNumber.checked == true) {
-	    write_cookie('Y');
-	  } else {
-	    write_cookie('N');
-	  }
-	  
-	}
-	
-	cookie_name = "www.emwd.org_admin";
-	function write_cookie(writeAcctFlag)	{
-	  if (document.cookie) {
-	    index = document.cookie.indexOf(cookie_name);
-	  } else {
-	    index = -1;
-	  }
-	  if (index == -1) { // cookie not found
-	    if (writeAcctFlag == "Y") {
-	   	  // #330-068 : @jli 2018-02-16 - encode the access code value before putting it into cookie  
-	      document.cookie = cookie_name + "=" + encodeURI(document.login.accessCode.value) + "; expires=Wednesday, 01-Aug-2040 08:00:00 GMT";
-	    }
-	  } else { // cookie found
-	    if (writeAcctFlag == "Y") {
-	      // #330-068 : @jli 2018-02-16 - encode the access code value before putting it into cookie.
-	      document.cookie = cookie_name + "=" + encodeURI(document.login.accessCode.value) + "; expires=Wednesday, 01-Aug-2040 08:00:00 GMT";
-	    } else {
-	      document.cookie = cookie_name + "=NA";
-	    }
-	  }
-	}
-	
-	function getAccountNo()	{
-	  if (document.cookie) {
-	    index = document.cookie.indexOf(cookie_name);
-	    if (index != -1) { // cookie for powerstream found
-	      countbegin = (document.cookie.indexOf("=", index) + 1);
-	      countend = document.cookie.indexOf(";", index);
-	      if (countend == -1) {
-	        countend = document.cookie.length;
-	      }
-	      accountNo = document.cookie.substring(countbegin, countend);
-	      if (accountNo == "NA") {
-	        accountNo = "";
-	        document.login.rememberMyAccountNumber.checked = false;
-	      } else {
-	        document.login.rememberMyAccountNumber.checked = true;
-	      }
-	      // #330-068 : @jli 2018-02-16 - decode the access code value when retrieving it from cookie.  
-	      document.login.accessCode.value = decodeURI(accountNo);
-	      if (document.login.accessCode.value != "") {
-	        document.login.password.focus();
-	      }
-	    } else { // cookie for powerstream not found
-	      document.login.rememberMyAccountNumber.checked = false;
-	    }
-	  }
-	}
-	
-	jQuery(function ($) {
-		
-	    $('#login-form').validate({
-		    rules: {
-		    	 accessCode: {
-			        required: true
-			     },
-				 password: {
-					required: true
-				 }
-		    },
-	        highlight: function(element) {
-	            $(element).closest('.form-group').addClass('has-error');
-	        },
-	        unhighlight: function(element) {
-	            $(element).closest('.form-group').removeClass('has-error');
-	        },
-	        errorElement: 'span',
-	        errorClass: 'help-block',
-	        errorPlacement: function(error, element) {
-	            if(element.parent('.input-group').length) {
-	                error.insertAfter(element.parent());
-	            } else {
-	                error.insertAfter(element);
-	            }
-	        },
-	        submitHandler: function(form) {
-	    	   $("#processingDialog .progress-bar").html("<strong>Please wait a few seconds while we verify your login information...</strong>");
-	    	   $("#processingDialog").modal('show');
-	    	   processRememberMyAccountNumber();
-	    	   form.submit();
-	        }
-	    }); 
-	    
-	    
-	    
-	    
-	    
-	    
-    });
 
-</script>
+
+
+<script src="/PortalV4.0/js/responsive-tabs.js"></script>
+
+
 
 
 
 <script type="text/javascript">
+
+// Identify the tab id of "Compare" tab.
+// Assume the "Compare" Tab ID is "bilCons" for "UsageComparisonRecentBill" inintially.
+// Sometimes the first tab is not bilCons,
+// then check the next possible Comparison Tab one by one, ie. Comparison In Area, Comparison YTD.
+var tabComparisonId = "#tabs-bilCons";
+var $tabAreaComparison = $('#tabs a[href="' + tabComparisonId + '"]');	
+if ($tabAreaComparison.length <= 0) { // compare in area
+	tabComparisonId = "#tabs-areaCons"; // 330-076
+	$tabAreaComparison = $('#tabs a[href="' + tabComparisonId + '"]');
 	
-	$(".toggle-password").click(function() {
-		$(this).children("i").toggleClass(".fa-eye fa-eye-slash");
-		var pwdInput = $($(this).attr("toggle"));
-		if (pwdInput.attr("type") === "text") {
-			pwdInput.attr("type", "password");
-		} else {
-			pwdInput.attr("type", "text");
+	if ($tabAreaComparison.length <= 0) { // compare ytd
+		tabComparisonId = "#tabs-ytdCons"; // 330-076
+		$tabAreaComparison = $('#tabs a[href="' + tabComparisonId + '"]');
+	}
+}
+
+function iframeOnLoad(tab) {
+	$('.tabLoadImg').css("display", "none");
+	
+	// show the tab (#tabs-CONSUMPTION) after the iframe finishes loading.
+	if (tab === "#tabs-CONSUMPTION") {
+		$('#tabs a[href="#tabs-CONSUMPTION"]').tab('show');
+	}
+	
+	// #collapse-[tab_name] is genearted by the 3rd party plugin and it has a lack of accessibility.
+	// Add role to those tab elements when the iframe is load in order to improve accessibility
+	var collapsedTabID = "#collapse-" + tab.substring(1); // tab is the id of tab panel, eg. #tabs-consumption. substring removes the "#" from tab.
+	$(collapsedTabID).attr("role", "tabpanel");
+	
+	// 2017-10-26: @hli - leave these debug statement for future development.
+	/*
+	alert("window width: " + $(window).width());
+	alert("document width: " + $(document).width());
+	alert("tab container width: " + $(tab).width());
+	alert("iframe width: " + $("#iframe-CONSUMPTION").width());
+	alert("content offset width: " + parent.$("#iframe-CONSUMPTION").contents().find("body")[0].offsetWidth); 
+
+	// 2017-10-26: @hli - fix the UI issue related to the iframe width on ios devices
+	var iframeId = "#iframe-"+ tab.substring(6);
+	if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+		// Currently, apply this fix for consumption page only as it is the only page that has problem on iOS device.
+		// leave the following commented codes for the future reference.
+		//parent.$(iframeId).css('width', $(tab).width()+'px');
+		parent.$(iframeId).css('width', "99%");
+	} */
+}
+
+// Load arrays to store tabs and frame padding
+var ArrayTabCodes = ['#mainTabs-dashboard','#tabs-BILLINQ','#tabs-PAYHIST','#tabs-CONSUMPTION','#tabs-WATSMCON','#tabs-bilCons','#tabs-SERVCREQ','#tabs-MYACCT','#tabs-AWEFORMS'];
+var ArrayTabPadding = [0,0,200,840,0,600,0,800,0];
+
+// To have the tab load in an iFrame use the rel="" tag on the tab <a> 
+function loadTabFrame(tab, url, reloadIFrameFlag) {
+	
+	// 330-681 2019-08-28 DM: Scroll to top of page on tab click
+	$('html, body').animate({
+		scrollTop: "0px"
+	}, 800);
+	
+	var iframeId = "iframe-" +tab.substring(6);
+	var targetIframe = $(tab).find("iframe");
+	if ( targetIframe.length == 0 || (reloadIFrameFlag=="Y" && targetIframe.length>0) ) {
+		
+		if (reloadIFrameFlag == "Y" && targetIframe.length>0) {
+			targetIframe.attr('src', url);
+		}else{
+			var html = [];
+			html.push('<div class="tabLoadImg" id="tabLoadImg'+tab+'"><div><center><img alt="loading_icon" src="/PortalV4.0/images/spin_loading_24x24.gif" /><br>Retrieving your data...</center></div></div>');
+			html.push('<div class="tabIframeWrapper">');
+			html.push('<iframe class="iframetab" id="' + iframeId + '" src="' + url + '"');
+			html.push(' onload="iframeOnLoad(' + "'" + tab + "'" + ')">Load Failed?</iframe>');
+			html.push('</div>');
+			
+			$(tab).append(html.join(""));
 		}
-	});
+		// Format iFrame height nicely
+		// Find the tab clicked and get the associated padding
+		var i = jQuery.inArray( tab, ArrayTabCodes );
+		var framePadding = ArrayTabPadding[i];
+		$(tab).find("iframe").height($(window).height()+framePadding);
+	}
+	return false;
+}
+
+function reloadGauges() {
+	if ($("#container-electric").length) {
+		var chartElectric = $("#container-electric").highcharts();
+		var width = $("#container-electric").width();
+		var height = $("#container-electric").height();
+		chartElectric.setSize(width, height);
+	}
+	
+	if ($("#container-water").length) {
+		var chartWater = $("#container-water").highcharts();
+		var width = $("#container-water").width();
+		var height = $("#container-water").height();
+		chartWater.setSize(width, height);
+	}
+	
+	if ($("#container-gas").length) {
+		var chartGas = $("#container-gas").highcharts();
+		var width = $("#container-gas").width();
+		var height = $("#container-gas").height();
+		chartGas.setSize(width, height);
+	}
+}
+
+
+	// Process Dashboard Transactions Link
+	function transactionsLink() {
+		loadTabFrame('#tabs-PAYHIST','/app/capricorn?para=paymentHistoryInq&tab=PAYHIST','N');
+		$('#tabs a[href="#tabs-PAYHIST"]').tab('show');
+	}
+
+
+
+	// Process Dashboard Manage Profile Link
+	function manageProfileLink() {
+		loadTabFrame('#tabs-MYACCT','/app/capricorn?para=myAccount&tab=MYACCT','N');
+		$('#tabs a[href="#tabs-MYACCT"]').tab('show');
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+//Process Dashboard Forms tab Link
+function formsTabLink() {
+	
+		loadTabFrame('#tabs-AWEFORMS','/app/apolloForms.jsp?id=0&tab=AWEFORMS','Y');
+		$('#tabs a[href="#tabs-AWEFORMS"]').tab('show');
+	
+}
+
+
+function loadLink() {
 	
 	
-	$(document).on('click', "#pickVerificationMethod a", function(e){
+	loadTabFrame('#mainTabs-dashboard', '', 'Y');
+	$('#tabs a[href="#mainTabs-dashboard"]').tab('show');
+}
+
+// custom theme to modify some default style for the chart
+Highcharts.customTheme = {
+	chart: {
+		borderWidth: 0
+	}
+}; 
+
+$(document).ready(function() {
+	
+	$('a[data-toggle="modal"]').on('click', function(e) {
 		e.preventDefault();
-		var $verifiMethodCode = $(this).data("verifimethod");
-		var $verifiMethodLabel = $(this).text();
-		$("#btnLabel-pickVerifiMethod").text($verifiMethodLabel);
+		var title = $(this).data("title");
+		var type = $(this).data("type");
 		
-		var $selectedVerifiMethodCode = $('#id-selectedVerifiMethod');
-		$selectedVerifiMethodCode.val($verifiMethodCode);
-		$selectedVerifiMethodCode.valid();
+		
+		var titleIcon = "";
+		if (type == '10') {
+			titleIcon ="<i class='fa fa-lg fa-exclamation-triangle text-danger padding-right-4' aria-hidden='true' title='Urgent'></i>";
+		} else if (type == '20') {
+			titleIcon = "<i class='fa fa-lg fa-exclamation-circle text-warning padding-right-4' aria-hidden='true' title='Important'></i>";
+		} else {
+			titleIcon = "<i class='fa fa-lg fa-info-circle text-info padding-right-4' aria-hidden='true' title='Standard'></i>";
+		}
+		$("#notificationsModalLabel").html(titleIcon + title);
+		
+		
+		$("#notificationsModal").on("show.bs.modal", function(e) {
+			var link = $(e.relatedTarget);
+			$(this).find(".modal-body").css({
+				'height':'auto'
+			});
+			$(this).find(".modal-body").load(link.attr("href"));
+		});
 	});
 	
-	jQuery(function($){
+	
+	// make tabs responsive.
+	fakewaffle.responsiveTabs(['xs', 'sm']);
+	
+	// For large screen, if user switch back to mainTab-dashboard, then reload gauges just in case that gauge weren't rendered correctly.
+	$(document).on('shown.bs.tab', '#tabs a[data-toggle="tab"]', function (e) {
+		if ($(e.target).attr('href') == "#mainTabs-dashboard") {
+			reloadGauges();
+			
+			// #330-384 - redraw datatables to trigger responsive event to resolve the collaspe issue on IE browser.
+			var billDtlTable = $('#billDtlTable').dataTable();
+			billDtlTable.api().columns.adjust().draw();
+		}
+	})
+	
+	// For small screen, if user switch back to mainTab-dashboard, then reload gauges just in case that gauge weren't rendered correctly.
+	$("#collapse-tabs-mainTabs-dashboard").on('shown.bs.collapse', function (e) {
+		 reloadGauges();
+	})
+	
+	/* Used by TOU Alter jsp (loaded by AJAX) */
+	$('#currentUsage').click(function() {
+		showProcessingDialog();
+	});
+	
+	
+	
+	//Create the tooltips only when document ready
+	// Use the each() method to gain access to each elements attributes
+	$('.img-tooltip').each(function() {
+		$(this).qtip(
+		{
+			content: {
+				title: $(this).attr('title'),
+				text: $(this).attr('alt')
+			},
+			style: {
+				classes: 'qtip-bootstrap'
+			},
+			show: {
+				event: 'mouseover'
+			},
+			hide: {
+				event: 'mouseleave',
+				fixed: true,
+				delay: 500
+			},
+			position: {
+				//my: 'right center',
+				//at: 'left center'
+				my: 'bottom left',
+				at: 'top right',
+				viewport: $('#capricorn-container'),
+				adjust: {
+					method: 'shift shift' // horizontal vertical
+				}
+			}
+		});
+	});
+	// alternate way to display tooltips
+	$('.img-tooltip-center').each(function() {
+		$(this).qtip(
+		{
+			content: {
+				title: $(this).attr('title'),
+				text: $(this).attr('alt'),
+				button: 'Close'
+			},
+			style: {
+				classes: 'qtip-bootstrap'
+			}, 
+			show: {
+				event: 'mouseover'
+			},
+			hide: {
+				event: 'mouseleave',
+				fixed: true,
+				delay: 250
+			},
+			position: {
+				// my: 'center right',
+				// at: 'left right',
+				my: 'bottom left', 
+				at: 'top right',
+				viewport: $('#mainTabs-dashboard'),
+				adjust: {
+					method: 'shift shift' // horizontal vertical
+				}
+			}
+		});
+	});
+	
+	/* The container that wraps Responsive Datatable with css class "collapse" will not collapse columns as expected.
+		Therefore, programmatcially hiding the collapsable panel has the following benefits:
+		1. make the container collapased by default at the beginning
+		2. animation with collapsing panel can notify users that panel is collapsable.
+	*/
+	//$("#collapseListGroup1").collapse("hide");
+	
+	/* Collapse the main tab (dashboard) on small screen.
+		It needs some time delayed to start hiding the tab.
+	*/
+	setTimeout(function() {
+		$("#collapse-mainTabs-dashboard").collapse("hide");
+	}, 300);
+	
+	$(document).on('submit', "#CSRswitchForm", function(e) {
+		if ($("#customerUserName").val() == "" && $("#customerAccountNumber").val() == "") {
+			$("#CSRswitchFormValidationMsg").html("<strong><span class='text-danger'> Please enter a Username or account number. </span></strong>");
+			e.preventDefault();
+		}
+	})
+	
+	// #collapse-[tab_name] is genearted by the 3rd party plugin and it has a lack of accessibility.
+	// Add role to those tab elements in order to improve accessibility
+	$('#collapse-mainTabs-dashboard').attr("role", "tabpanel");
+	
+});
+
+var clearOtherFieldsInForm = function(widget) {
+	widget.siblings('input').not(':input[type=submit]').each(function () {
+		$(this).val('');
+	});
+};
+ 
+function processRequest(buttonName) {
+	form = document.selectAccountSearch;
+	if (buttonName == 'Search') {
+		form.userAction.value = "search";
+		form.submit();
+	} else if (buttonName == "downloadAll") {
+		form.downloadConsumption.value = "Y";
+		form.downloadMultipleAccounts.value = "Y";
+		form.action = "/app/capricorn";
+		form.para.value = "consumptionInquiry";
+		form.submit();
+	} else if (buttonName == "viewAll") {
+		alert("View Current Bills for all accounts.");
+	}
+}
+
+function getSelectionStart(input) {
+	var range = document.selection.createRange();
+	var isCollapsed = range.compareEndPoints("StartToEnd", range) == 0;
+	if (!isCollapsed)
+		range.collapse(true);
+	var b = range.getBookmark();
+	return b.charCodeAt(2) - 2;
+}
+
+function getSelectionEnd(input) {
+	var range = document.selection.createRange();
+	var isCollapsed = range.compareEndPoints("StartToEnd", range) == 0;
+	if (!isCollapsed)
+		range.collapse(false);
+	var b = range.getBookmark();
+	return b.charCodeAt(2) - 2;
+}
+
+function goNext_old( field , ev , length , nextField ) {
+	setTimeout(function() {
+		var start = getSelectionStart(field);
+		var end = getSelectionEnd(field);
+		if ( start == end && end == length ) nextField.focus();
+	} , 20 );
+}
+
+function goNext(fieldName , maxFieldLength , nextFieldName) {
+	form = document.selectAccountSearch;
+	var currentFieldValueLength = eval("form." + fieldName + ".value.length");
+	if (currentFieldValueLength == maxFieldLength) {
+		eval("form." + nextFieldName + ".focus()");
+	}
+	return;
+}
+
+function intOnly(field,specialCharacters) {
+	var result = new String();
+	var numbers = "0123456789" + specialCharacters;
+	var chars = field.value.split("");
+	for (i = 0; i < chars.length; i++) {
+		if (numbers.indexOf(chars[i]) != -1) {
+			result += chars[i];
+		}
+	}
+	if (field.value != result) {
+		field.value = result;
+	}
+}
+
+// 330-560 changes for ionic app
+function loadTabForDevice(landingPage) {
+	if (landingPage === 'billing') {
+		 
+		//loadTabFrame('#tabs-BILLINQ','/app/capricorn?para=billInquirySelect&tab=BILLINQ','N');
 		
-		if($("#btnLabel-pickVerifiMethod").length){
-			var $btnPickVerifiMethod = $("#btnLabel-pickVerifiMethod");
-			var $btnPickVerifiMethodLabel = $btnPickVerifiMethod.text().trim();
-			if($btnPickVerifiMethodLabel === ""){
-				var $verifiMethodCode = $btnPickVerifiMethod.data("verifimethod");
-				var $firstVerifiMethodOption = $("#pickVerificationMethod li:first-child>a");
-				var $firstVerifiMethodOptionLabel = $firstVerifiMethodOption.text();
-				var $firstVerifiMethodOptionCode = $firstVerifiMethodOption.data("verifimethod");
-				$("#btnLabel-pickVerifiMethod").text($firstVerifiMethodOptionLabel);
-				
-				var $selectedVerifiMethodCode = $('#id-selectedVerifiMethod');
-				$selectedVerifiMethodCode.val($firstVerifiMethodOptionCode);
+		loadBillTab('N', '');
+	}
+	// 400-029 DM 2020-02-29: Add support for forms tab
+	else if (landingPage === 'forms') {
+		formsTabLink(); 
+	}
+	// CAP-1146 Allow Mobile App link to the portal page directly (linkToPortalPageDirectly=false)
+	else if (landingPage === 'DASHBRD') {
+		// load nothing
+		// dashboard page is constructed by the outer frame dashboard_layout (e.g. dashboard_left_nav.jsp), it's not a separate page that need to be loaded
+	}
+	else {
+		loadLink();
+	}
+}
+
+function loadTab_MyBills() {
+
+}
+
+// force bill tab to refresh/cache
+
+function loadBillTab(reloadFlag, additionalParam) {
+	
+			if (additionalParam !== "") {
+				additionalParam = "&" + additionalParam;
+			}
+			loadTabFrame('#tabs-BILLINQ','/app/capricorn?para=billInquirySelect&tab=BILLINQ' + additionalParam, reloadFlag);
+			$('#tabs a[href="#tabs-BILLINQ"]').tab('show');	
+	
+}
+
+
+
+</script>
+
+
+
+<script>
+$(document).ready(function() {
+	// 330-681 2019-08-28 DM: Scroll to top of page on tab click
+	$('.toggle-panel').on('click', function(event) {
+		$('html, body').animate({
+			scrollTop: "0px"
+		}, 800);
+	});
+	
+	// for tabs headings (on large screen i.e. desktop)
+	$('#myAccountTabs a').click( function(e) {
+		var paneID = $(e.target).attr('href');
+		
+		
+			dashboardScotchPanel.toggle();
+		
+		
+		// If paneID is not found on the current click target, i.e. <a>'s child tag is clicked, then find the closest parent <a> tag.
+		if (paneID == undefined) {
+			paneID = $(e.target).closest("a").attr("href"); // closest("a") return a jquery object.
+		}
+		
+		var src = $(paneID).attr('data-src');
+		// CAP-833: LeftMenuTab should respect the optionTarget value and behave accordingly.
+		// Possible targetOption values are: _top, _parent, _blank, and any custom value.
+		// _top and _parent would open the response in the same tab.
+		// _blank and custom target value would open the response in the new tab.
+		var optionTarget = $(paneID).attr('data-opttar');
+		if (optionTarget == '_parent') {
+			window.parent.location.href = src + '&opttar='+optionTarget;
+		} else if (optionTarget == '_top') {
+			window.top.location.href = src + '&opttar='+optionTarget;
+		} else if (((optionTarget == '_blank') || (optionTarget != '')) && optionTarget != undefined ) {
+			window.open(src + '&opttar='+optionTarget, optionTarget);
+			return false;
+		} else {
+			if (src !== undefined && src !== null) { // mainTab-dashboard does not have data-src link, so do not load iframe to this kind of tab
+				loadTabFrame(paneID, src ,'N');
 			}
 		}
 	});
 	
-</script> 
+	$('.scotch-panel-canvas').on('click', function(event) {
+		if ($(this).is('.scotch-is-showing')) {
+			dashboardScotchPanel.toggle();
+		}
+	});
+	
+	// for accordion (collapsed-tab) headings (on small screen i.e. mobile)
+	// #collapse-myAccountTabs is the id for responsive tab headers' container
+	$('#collapse-myAccountTabs a').click(function(e) {
+		var paneID = "";
+		if ($(e.target).attr('href')) {
+			paneID = "#" + $(e.target).attr('href').substring(10); // $(e.target).attr('href') returns #collapse-[href], so cut off the first 10 characters.
+		}
+		
+		// If paneID is not found on the current click target, i.e. <a>'s child tag is clicked, then find the closest parent <a> tag.
+		if (paneID == "") {
+			paneID = "#" + $(e.target).closest("a").attr("href").substring(10); // closest("a") return a jquery object that's cloest parent <a> tag.
+		}
+		
+		var src = $(paneID).attr('data-src');
+		if (src !== undefined && src !== null) { // mainTab-dashboard does not have data-src link, so do not load iframe to this kind of tab
+			loadTabFrame(paneID, src ,'N');
+		}
+	});
+	
+	
+	
+	
+	$("#cap_table_account_ribbon").on('click', '#btnSuggestBudgetAmount', function() {
+		$(this).button('loading');
+		var ajaxURL = "/app/capricorn?para=ajaxGetSuggestedBudget";
+		$.ajax({type:"get",
+			cache: false,
+			url: ajaxURL
+		}).done(function(data) {
+			$("#suggestedBudgetInfoContainer").html(data);
+		});
+	});
+	
+	// 330-793 DM: pastDueAmount is loaded into ACCMST correctly so no need for this AJAX call
+	
+	
+	
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+window.onscroll = function() {myFunction()};
+
+var header = document.getElementById("selectAccountRibbon");
+var sticky = header.offsetTop;
+
+function myFunction() {
+  if (window.pageYOffset > sticky) {
+    header.classList.add("sticky-header");
+  } else {
+    header.classList.remove("sticky-header");
+  }
+}
+</script>
+
+<script type="text/javascript">
+
+var dashboardScotchPanel = $('#scotch-panel').scotchPanel({
+	containerSelector: '#tabs',
+    direction: 'left',
+    duration: 300,
+    transition: 'ease',
+    clickSelector: '.toggle-panel',
+    distanceX: '180px',
+    enableEscapeKey: true});	
+    
+//$('#dbln-tab-content').css('min-height', ($('#myAccountTabs').height()+5) + 'px');    
+
+$(document).ready(function(){
+	$('#myAccountTabs').removeClass('hidden-sm');	
+	$('#myAccountTabs').removeClass('hidden-xs');
+	// 330-531 hamburger menu gets wrong size on mobile fix, move code above to jquery ready
+	$('#dbln-tab-content').css('min-height', ($('#myAccountTabs').height()+5) + 'px');    
+	
+});
+
+</script>
+
+
+
+	
+
+
 </body>
 </html>
-

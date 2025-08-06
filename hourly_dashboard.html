@@ -1,0 +1,769 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<title>EMWD :: Cannot Process Request</title>
+
+			
+
+
+<meta name="description" content="EMWD is your power hub for customer self service web portals supplying electrical energy to residential, commercial and industrial customers.">
+<meta name="keywords" content="EMWD, MyAccount, deregulation, heating, energy, power, utility, appliance, range, stove, dryer, water heater, air conditioning, fireplace, home improvement, renovation, electricity, electric power, electric energy, electric generation, electric meter, customer service, electric bill, residential electric rates, business electric rates, energy audit, kilowatt, kilowatt hour, kWh, bill payment information, electrical usage rates, rates, bill payment information, electrical information, electricity information, electrical services">
+
+
+
+
+
+
+	
+	
+	
+	<script src="/PortalV4.0/js/jquery.min.js"></script>
+	
+
+
+	<link href="/PortalV4.0/css/cap.min.css" rel="stylesheet" type="text/css">
+	
+    
+
+	<link href="/PortalV4.0/capricornCustom.css" rel="stylesheet" type="text/css">
+	<link rel="shortcut icon" href="/PortalV4.0/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+	
+
+
+
+
+
+
+
+
+
+	<script src="/PortalV4.0/js/cap.min.js" type="text/javascript"></script>
+	
+
+
+
+
+<script src="/PortalV4.0/js/custom.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+
+//change the moment locale globally based on the language code.
+moment.locale('en');
+
+
+function showProcessingDialog(processingBarLabel) {
+	if(processingBarLabel != null && processingBarLabel !== ''){
+		$("#processingBarLabel").html(processingBarLabel);
+	}
+	$("#processingDialog").modal('show');
+}
+
+function hideProcessingDialog(){
+	$("#processingDialog").modal('hide');
+}
+
+$(document).ready(function() {
+	var secureFlag = true;
+
+	/* Close the scotch panel (left-menu) while clicking on iframe contents. */
+	$('body, .tabContentWrapper').on('click', function(e){
+		if(window.parent.dashboardScotchPanel !== undefined){			
+			window.parent.dashboardScotchPanel.close();
+		}
+	});
+
+	
+	
+	$("head").append("<link href='//fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>");
+	
+	
+    
+    
+	
+	// =========================================
+    
+	// JS codes for topIncludeV3.jsp
+	//$("#subtabs, #xs-subtabs").buttonset();
+	
+	$("#subtabs input[type=radio], #xs-subtabs input[type=radio]").change(function() {
+	    // 330-694 Kubra changes for EMWD support generic landing page and open page in new window instead of iframe via opttar
+	    // CAP-833: Modified logic for subMenu(TopNavigationMenu) to support the optionTarget value and behave accordingly.
+	    // Possible targetOption values are: _top, _parent, _blank, and any custom value.
+	    // _top and _parent would open the response in the same tab.
+	    // _blank and custom target value would open the response in the new tab.
+		var optionTarget = $(this).attr("data-opttar");
+		if ('_parent' === optionTarget ) { // same tab
+			window.parent.location.href = $(this).attr("rel") + '&opttar='+optionTarget;
+			return false;
+	
+		} else if ('_top' === optionTarget ) { // same tab
+			window.top.location.href = $(this).attr("rel") + '&opttar='+optionTarget;
+			return false;
+		
+		} else if (('_blank' === optionTarget) || ('' != optionTarget) ) { // new tab for _blank target or any other customized target
+			window.open($(this).attr("rel") + '&opttar='+optionTarget, optionTarget) ;
+			var _this = this;
+			setTimeout(function() { $(_this).parent().removeClass('active') ;}); // trick to deselect the radio
+			
+		} else {
+			showProcessingDialog();
+			window.location.href = $(this).attr("rel");			
+		}
+		
+	});
+	// END JS codes for topIncludeV3.jsp
+	// =========================================
+    
+   $('#SMCONSUM').click(function() {
+     	showProcessingDialog();
+   });
+   $('#SMARTCON').click(function() {
+     	showProcessingDialog();
+   });
+   
+   $('a[rel*=blockUI]').click(function() {
+    	showProcessingDialog();
+   });
+
+
+	// Setup jQuery button styling
+	$( "input:submit, input:button, a, button", ".buttonV2" ).button();
+	$( "a", ".buttonV2" ).click(function() { return false; });
+
+	// Setup shadows
+	$('.box.standard').shadow();
+	$('.box.lifted').shadow('lifted');
+	$('.box.perspective').shadow('perspective');
+	$('.box.raised').shadow('raised');
+	$('.box.sides-vt-1').shadow({type:'sides',sides:'vt-1'});
+	$('.box.sides-vt-2').shadow({type:'sides',sides:'vt-2'});
+	$('.box.sides-hz-1').shadow({type:'sides',sides:'hz-1'});
+	$('.box.sides-hz-2').shadow({type:'sides',sides:'hz-2'});
+	$('.box.rotated').shadow({type:'rotated',rotate:'-5deg'});	
+
+	// Help text dialog
+    $(".helpLink").click(function () {
+        $("#helpDialog").attr('src', $(this).attr("href"));
+        $("#helpDiv").dialog({
+            width: 640,
+            height: 450,
+            modal: true,
+            close: function () {
+                $("#helpDialog").attr('src', "about:blank");
+            }
+        });
+        return false;
+    }); 
+    
+    // change number: 252-013
+	var f=navigator.userAgent.search("Firefox");
+	var c=navigator.userAgent.search("Chrome");
+	var ie=navigator.userAgent.search("MSIE") + (navigator.userAgent.search(/Trident/)); // MSIE for older ie and Trident for newer IE such as IE 11
+	var ie9=navigator.userAgent.search("MSIE 9.0");
+    
+    // set the zoom level from cookie
+    var cookie_name = "zoom_level";
+    var index = document.cookie.indexOf(cookie_name);
+    var zoomlvl = 100;
+    
+	// change number: 252-013
+	// write cookies
+	function write_cookie_for_zoom(zoomLevel)	{
+		$.cookie(cookie_name, zoomLevel,  { path: '/', expires: 3650, secure: secureFlag });
+	}
+    
+    if (index >= 0) {
+    	zoomlvl = Number(document.cookie.substring(index).split(";")[0].split("=")[1]);
+    	 
+    	if(zoomlvl!=100){
+    		zoom(zoomlvl);
+    	}
+
+    }else{
+   		/*console.log("Cookie not Found at the beginning.");*/
+    }
+ 
+   // zoom in the page
+   $("#zoom_in_page").click(function () {
+        // max zoom level is 150%
+        if(zoomlvl>= 150){
+          return;
+        }
+        zoomlvl += 10;
+        zoom(zoomlvl);
+   });
+   
+   // zoom out the page
+   $("#zoom_out_page").click(function () {
+   		// min zoom level is 70%
+        if(zoomlvl<=70){
+          return;
+        }
+    	zoomlvl -= 10;
+    	zoom(zoomlvl);
+   });
+   
+   // zoom back
+   $("#back_to_original_page").click(function () {
+    	zoomlvl = 100;
+    	zoom(zoomlvl);
+   });
+   
+
+   function zoom(zoomlvl){
+	   	if(f>-1){ // for firefox, use css3: transform:scale
+	        $("body").css({
+	      			"-moz-transform": "scale(" + zoomlvl/100 + ")",
+	     			"-moz-transform-origin": "0 0"
+	   		});
+	        var viewPortWidth = $(window).width();
+	   		var currMainContentWrapperWidth = viewPortWidth * (zoomlvl/100);
+	   		var mainContentWidthDiff = (currMainContentWrapperWidth - viewPortWidth) / 2;
+			if(mainContentWidthDiff>50){ /* zoom in */
+		   		$("body").css("left", "-" + mainContentWidthDiff + "px");
+			}else if(mainContentWidthDiff<50){  /* zoom out */
+		   		$("body").css("left", mainContentWidthDiff + "px");
+			}
+	   		
+	    }else if(ie9>-1){ // for ie9
+	    	$("body").css({
+	 			"transform": "scale(" + zoomlvl/100 + ")",
+				"transform-origin": "0 0",
+				"-ms-transform": "scale(" + zoomlvl/100 + ")",
+				"-ms-transform-origin": "0 0"
+			});
+	    
+	    }else{  // for other browers, use zooming
+	   	  $("body").css("zoom", zoomlvl+"%");
+	  	  if(ie>-1){  // for ie, re-position the div to center
+	  		 $("body").css("width", "100%");
+	  	  	
+	  	     // center the viewport in the center if there is scroll bar in the window.
+	  	     var newPosition =  ($(document).width() - $(window).width())/2;
+	  	   	 window.scrollTo(newPosition,0);
+	      }
+	   	}
+	   	write_cookie_for_zoom(zoomlvl);
+   }
+   
+   
+   
+		$(".btnSwitchLanguage").on('click', function(e){
+			var ajaxUrl = "/app/capricorn?para=switchLanguage";
+			
+			var language = "ES";
+			$.ajax({
+				type: "post",
+			    cache: false,
+				url: ajaxUrl,
+				data: {
+					"language" : language
+				}
+			}).done(function(){
+				// cookie will expire in 10 years...
+				$.cookie("emwd.org_language", language,  { expires: 3650, secure: secureFlag });
+				
+				if(window.location.href.indexOf('/capricorn') > -1){
+					window.location.replace("/app");
+				}else{
+					window.location.reload();
+				}
+				
+			});
+			
+		});	
+
+ 
+   
+  
+  
+  
+  
+  function onElementHeightChange(elm, callback){
+		
+		if(elm == null)
+			return;
+		var index = 0;
+		var lastHeight = elm.clientHeight, newHeight;
+	    (function run(){
+	        newHeight = elm.clientHeight;
+	        
+	        
+	        if( lastHeight != newHeight || (lastHeight == newHeight && !iframeHeightAdjusted))
+	            callback();
+	        lastHeight = newHeight;
+
+	        if( elm.onElementHeightChangeTimer )
+	            clearTimeout(elm.onElementHeightChangeTimer);
+
+	        //console.log('run' + (index++));
+	        elm.onElementHeightChangeTimer = setTimeout(run, 500);
+	    })();
+	    
+	    // #330-300 - 2018-11-15 : Enhance the performance by reducing the workload. Cancel the resize function in 10 seconds.
+	    
+	    if( elm.onElementHeightChangeTimer ){
+	    	setTimeout( function(){
+	    		clearTimeout(elm.onElementHeightChangeTimer);
+	    		//console.log('clear timeout');
+	    	}, 5000);
+	    }
+	}
+  
+  onElementHeightChange(document.body, function(){
+		resizeIFrameWhenBodyHeightChanges();
+	  });  	
+  	//setTimeout(resizeIFrameWhenBodyHeightChanges, 2000);
+   
+	
+	$(document).on('click', ".logoff", function(e){
+	 	e.preventDefault();
+	 	$("#form-logoff").submit();
+	});
+  	
+}); /* end jQuery.document.ready() */
+
+
+
+
+var iframeHeightAdjusted = (typeof $.cookie("googtrans") == 'undefined' || $.cookie("googtrans") === "/en/en");
+
+
+// 2017-06-06 @hli: Resize current active iframe according to its own content height when the page finishes loading.
+// 2017-08-14 @grohman: Account for new dashboard nav.
+function resizeIFrameWhenBodyHeightChanges(){
+	  var $frametabs = parent.$('.iframetab');
+	  var currentFrame;
+	  $frametabs.each(function(){ 
+		  var $iframeTabContainer = $(this).closest(".tab-pane");
+		  if($iframeTabContainer.css("display") != "none"){ // all other iframes are invisible. Find the current active iframe.
+			  currentFrame = $(this);
+			  currentFrame.load(resizeIframe()); // reload the current iframe size.
+			  return;
+		  }
+	  });
+	  
+	  // reload iframe according to the content size.
+	  function resizeIframe() {
+	  	  var frameBodyElment = currentFrame.contents().find("body")[0];
+	  	  if(frameBodyElment == undefined){
+	  		  return;
+	  	  }
+		  var contentHeight = frameBodyElment.offsetHeight;
+		  
+		  var myScotchNav = parent.document.getElementById('myAccountTabs');
+		  if(typeof myScotchNav !== 'undefined'){
+			  if(contentHeight < myScotchNav.offsetHeight){
+				  contentHeight = myScotchNav.offsetHeight;
+			  }
+		  }
+		  
+		  
+		  
+		  if(!iframeHeightAdjusted){
+		  	 currentFrame.height(contentHeight+1);
+		  	 iframeHeightAdjusted = true;
+		  }
+				  
+		  // CAP-997 V4 - Default height of Iframes
+		  // Get the iframe padding height from menu option code and para from above java code.  
+		  // Compare it with contentHeight and take the larger one to set the default page height.
+		  var iframePaddingHeight = 0;
+		  var maxHeight = contentHeight;
+		  if(iframePaddingHeight > contentHeight) {
+			  maxHeight = iframePaddingHeight;
+	      
+			  resizeInnerIframe(maxHeight); 
+		  }
+		  
+		  currentFrame.height(maxHeight + 1);
+		  
+	  }
+	  
+	  
+	  function resizeInnerIframe(outerIframeHeight){
+	  	  var innerFrame = $(".heightAdjustedInnerIframe");
+		  if(innerFrame[0]){
+			  innerFrame[0].height = calculateHeightInnerIframe(outerIframeHeight);
+		  }
+	  }
+	  
+	  
+	  function calculateHeightInnerIframe(outerIframeHeight){
+		  var subtabs = $("#subtabs");
+		  var subtabsVertical = $("#xs-subtabs");
+		  if(subtabs[0] || subtabsVertical[0]){
+			  return calculateHeightWithSubTabs(subtabs, subtabsVertical, outerIframeHeight);
+		  } else{
+			  return calculateHeightWithoutSubTabs(outerIframeHeight);
+		  }
+	  }
+	  
+	 function calculateHeightWithSubTabs(subtabs, subtabsVertical, outerIframeHeight){
+		  var subtabsHeight = subtabs[0].offsetHeight;
+		  var subtabsVerticalHeight = subtabsVertical[0].offsetHeight;
+		  var innerHeight = outerIframeHeight;
+		  
+		  
+		  if(subtabsHeight != 0){
+			  innerHeight -= (subtabsHeight + 70);
+		  } else if(subtabsVerticalHeight != 0){
+			  innerHeight -= (subtabsVerticalHeight + 70);
+		  }
+		  
+		  return innerHeight;
+	 }
+	 
+	 function calculateHeightWithoutSubTabs(outerIframeHeight){
+		 
+		 return (outerIframeHeight - 70);
+	 }
+}
+
+
+
+
+
+
+
+
+
+	$.fn.dataTable.ext.errMode = 'throw';
+
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  return window.open(theURL,winName,features);
+}
+
+</script>
+
+
+<!-- Page Rating JS -->
+<script>
+	
+	function browserSupportsCors() {
+	    if ("withCredentials" in new XMLHttpRequest()) return true;
+	    else if (typeof XDomainRequest == "object") return true;
+	    else return false;
+	}
+
+	$(document).ready(function(){
+		var $star_rating = $('.star-rating .fa');
+
+		var SetRatingStar = function() {
+		  return $star_rating.each(function() {
+			if (parseInt($star_rating.siblings('input.rating-value').val()) >= parseInt($(this).data('rating'))) {
+			  return $(this).removeClass('fa-star-o').addClass('fa-star');
+			} else {
+			  return $(this).removeClass('fa-star').addClass('fa-star-o');
+			}
+		  });
+		};
+
+		$star_rating.on('click', function() {
+		  $star_rating.siblings('input.rating-value').val($(this).data('rating')).change();
+		  return SetRatingStar();
+		});
+
+		SetRatingStar();
+	});
+	
+	
+	// Page Rating 
+	$('input[name="pageRating"]').on("change", function(){
+		
+		var pageRating = $(this).val();
+		var documentId = $('#pageCommentsAndRating').find('input[name="documentId"]').val();
+		var pageRatingCSRFToken = $('#pageCommentsAndRating').find('input[name="jspCSRFToken"]').val();
+			
+		var url = "/app/capricorn?para=documentRatingAndComments&type=RATING"; 
+
+		if(browserSupportsCors()) {
+			jQuery.ajax({
+				type: "POST",
+				cache: false,
+				url: url,
+				data: {
+					"pageRating" : pageRating,
+					"documentId" : documentId,
+					"jspCSRFToken" : pageRatingCSRFToken
+				}
+			})
+			.done(function(data){ 
+				
+				$('#input-pageRating').val("");
+
+				$('#ratingResponse').html(data);
+			});
+		} else {
+			alert("CORS not supported");
+		}
+		
+	});	
+	
+	// Page Comments 
+	function submitDocumentComments(){
+		var documentId = $('#pageCommentsAndRating').find('input[name="documentId"]').val(); 
+		var ratingComment = $('#input-pageComment').val();
+		var pageRatingCSRFToken = $('#pageCommentsAndRating').find('input[name="jspCSRFToken"]').val();
+		
+		if(ratingComment === "") return;
+		
+		var url = "/app/capricorn?para=documentRatingAndComments&type=COMMENT"; 
+
+		if(browserSupportsCors()) {
+			jQuery.ajax({
+				type: "POST",
+				cache: false,
+				url: url,
+				data: {
+					"documentId" : documentId,
+					"ratingComment" : ratingComment,
+					"jspCSRFToken" : pageRatingCSRFToken
+				}
+			})
+			.done(function(data){ 
+				$('#input-pageComment').val("");
+
+				$('#commentsResponse').html(data);
+			});
+		} else {
+			alert("CORS not supported");
+		}
+		
+	}
+	
+	$('button[name="pageCommentButton"]').on("click", function(){
+		submitDocumentComments();
+	});		
+	
+	$("#pageCommentForm").on('submit', function(e){
+		e.preventDefault();
+		submitDocumentComments();
+	});
+	
+	
+	// =========================================================
+	// Center modal dialog to the middle of current view.
+	// =========================================================
+	var iframeId = "";
+	var iframeTop = 0;
+	if(window.frameElement){
+       	iframeId = window.frameElement.id;
+       	iframeTop = parent.$("#"+iframeId).offset().top;  // get the iframe top, i.e. the height between 0 and the iframe's top border.
+    }
+	// A variable that saves the original form data to detect if the form has been changed when submitting the form.
+	var $form_original_data = "";
+	// reposition the dialog modal based on the screen view.
+	/* $(document).on('shown.bs.modal', '#subscribeDialog, #ajaxSelectLinkedAccountsModal, #ajaxViewAddtionalProfileModal', function(e) {
+		// cache the element into js.
+	   var $currentTarget = $(e.currentTarget); // modal
+	   var dialog = $currentTarget.find('.modal-dialog');
+	   centerModalWidget(dialog);
+       
+   	});	 */
+   	
+   	$(document).on('shown.bs.modal', '.modal:not(#processingDialog)', function(e) {
+		// cache the element into js.
+	   var $currentTarget = $(e.currentTarget); // modal
+	   var dialog = $currentTarget.find('.modal-dialog');
+	   
+	   
+	   resizeModalForView($currentTarget);
+	   
+	   
+	   if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)){
+		   parent.$('body,html').addClass("modal-open");
+	   }else{
+		   centerModalWidget(dialog);
+	   }
+   	});	
+   	
+   	
+   	function resizeModalForView($currentTarget){
+ 	   var percentageInsideWindow = 0.65; 
+   	   var modalObj = $currentTarget.find('.modal-content');
+	   var modalCurrentHeight = $(modalObj).height();
+   	   var modalNewHeight = parent.window.innerHeight * percentageInsideWindow;
+	   if (modalCurrentHeight > modalNewHeight) {
+		   //alert("modalCurrentHeight=" + modalCurrentHeight); // leave it for debug.
+		   //alert("modalNewHeight=" + modalNewHeight); // leave it for debug.
+		   var modalBody = $currentTarget.find('.modal-body');
+		   
+		   var modalHeaderHeight = $currentTarget.find('.modal-header').height();
+		   var modalFooterHeight = $currentTarget.find('.modal-footer').height();
+		   var newModalBodyHeight = Math.max(modalNewHeight - modalHeaderHeight - modalFooterHeight, 50);
+		   //alert("newModalBodyHeight=" + newModalBodyHeight); // leave it for debug.
+		   $(modalBody).height(newModalBodyHeight);
+		   $(modalBody).css('overflow-y', 'auto'); 
+	   }
+   	}
+   	
+   	
+	$(document).on('hide.bs.modal', '.modal:not(#processingDialog)', function(e) {
+		if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)){
+			parent.$('body, html').removeClass("modal-open");
+		}
+	});
+   	
+   	
+	
+    $('#processingDialog').on('show.bs.modal', function(e){  
+    	var $currentTarget = $(e.currentTarget); // modal
+	   	var dialog = $currentTarget.find('.modal-dialog');
+	   	centerModalWidget(dialog, 450); // note: make the height larger such as 450 would put the widget higher instead of center.
+    });
+  
+   	
+	
+ 	// a function to center the passed in dialog/modal in the current view port.
+   	function centerModalWidget(dialog, dialogHeight){
+        var offset = $(parent.document).scrollTop(); // Get the current vertical position of the scroll bar for the first element in the set of matched elements
+        var actualViewportHeight = parent.window.innerHeight;
+        // #330-304 - Enhance the centerModal logic by using a more accurate modal height if applicable.
+        var modalHeight = 0;
+
+        // #330-370: use the height from the parameter by default. If no height value is passed in, detect the modal height programmatically.
+        if(typeof(dialogHeight) !== 'undefined' && dialogHeight!==0){
+        	modalHeight = dialogHeight;
+        }else{
+        	modalHeight = dialog.height();
+        }
+        
+     	// If the modalHeight is still 0, then use an average height value.
+        if(modalHeight == 0)
+        	modalHeight = 495;  
+        
+     	// show the modal at the position of (parent.scrollTop - iframe's top) [inner viewport start point] + (actualViewportHeight-modalHeight)/2) [center in the current view port] .
+        var newPosition = 0;
+     	var innerFrameTop = 0;
+        if(window.frameElement){ // if this is inside a iframe, then calculate the distance between iframeTop and scrollTop. If not a iframe, then always use 0.
+        	// #330-337 - When the view port is staying at the top of the iframe, this value should allow to be negative.The negative iframeTop value should be included in the calculation for centering. 
+        	//innerFrameTop = Math.max(0, offset-iframeTop);
+        	innerFrameTop = offset-iframeTop;
+        	// #330-337 - the final new position must be either postive value or 0. 
+        	newPosition = Math.max(0, innerFrameTop + (actualViewportHeight-modalHeight)/2);
+        }else{
+        	innerFrameTop = offset;
+        	newPosition = Math.max(0, innerFrameTop);
+        }
+     	
+        
+        
+        /* 
+        console.log("innerFrameTop=" + innerFrameTop);
+        console.log("actualViewportHeight=" + actualViewportHeight);
+        console.log("modalHeight=" + modalHeight);
+        console.log("scrollTop=" + offset);
+        console.log("iframeTop=" + iframeTop);
+        console.log("innerFrameTop=scrollTop-iframeTop= " + innerFrameTop);
+        console.log("newPosition = innerFrameTop + (actualViewportHeight-modalHeight)/2 = " + newPosition);
+        */
+        dialog.css("top", newPosition);
+        
+/*  	   if(innerFrameTop>0){ // if the viewport is showing deep down in the parent window, i.e. innerFrameTop will be greater than 0. Show the dialog in the center of innerFrameTop.
+        	dialog.css("top", newPosition);
+ 	   } else{ // if the viewport is showing the top of the parent window, i.e. innerFrameTop will be 0. Show the dialog closed to the top of inner frame.
+ 		    dialog.css("top", "20%");
+ 	   } */
+   	} 
+
+ 	
+   	$(document).on('click', ".btnClickLoading", function(e){
+   		var $thisButton = $(this);
+   		if($thisButton.attr("data-loading-text") === ""){ // add the default loading message if not set.
+   			$thisButton.attr("data-loading-text", "Loading...");
+   		}
+   		$thisButton.button('loading');
+   	});
+   	
+   	
+   	var iframeId = "";
+	if(window.frameElement){
+       	iframeId = window.frameElement.id;
+    }
+   	
+   	Highcharts.setOptions({
+    	
+	    	lang: {
+	            decimalPoint: '.',
+	            thousandsSep: ','
+	        }
+    	
+    });
+ 	
+</script>
+
+
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<form name="logOffForm" name="logOffForm" role="form" class="form-horizontal" method="post" action="/app/capricorn">
+	<input type="hidden" name="para" value="logoff"/>
+	<input type="hidden" name="jspCSRFToken" value=""/>
+</form>
+ 
+   <div >
+	   <div class="panel panel-capricorn panel-info text-center center-block" >
+	   		<div class="panel-heading">Oops! Your request cannot be completed.</div>
+		    
+		    <div class="panel-body">
+		      <p>Our apologies.</p>
+		      
+		      
+			  	<div class="alert alert-danger">An error was encountered when trying to complete your request. Please try again.</div>
+			  
+			  
+			  <p>Having problems? Please contact our <a href="https://www.emwd.org/contact-us" target="_blank">customer support team</a>.</p>
+	     	  
+	     	  
+	     	  
+	     	  	<input class="btn btn-default" type="button" name="Button" value="Go back and try your request again" onClick="history.go(-1)" autofocus />
+	     	  
+	     	   
+	     	  
+	     	  
+	     	  
+	   		</div>
+	   </div>
+   </div>
+
+
+
+<script>
+
+function back2CapricornHomePage() {
+	   
+	    location.href = "/app/";
+	  
+	}
+
+
+function logoff() {
+    
+    var form = document.logOffForm;
+    form.submit();
+}
+</script>
+
+</body>
+</html>
