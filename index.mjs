@@ -27,6 +27,12 @@ let mqttClient;
 
 // Initialize MQTT connection
 const connectMQTT = () => {
+  // Skip MQTT if host is 'disabled' or 'fake'
+  if (config.mqtt.host === 'disabled' || config.mqtt.host === 'fake') {
+    console.log('📡 MQTT disabled for testing');
+    return;
+  }
+
   const mqttUrl = `mqtt://${config.mqtt.host}:${config.mqtt.port}`;
   const options = {};
   
@@ -128,13 +134,30 @@ const extractUsageFromDashboard = (html, expectedType = null) => {
           const arrayDefMatch = script.match(/xAxisLabelArray\s*=\s*(\[[\s\S]*?\]);/);
           if (arrayDefMatch) {
             console.log('✅ Found xAxisLabelArray definition');
+            console.log('📋 Raw xAxisLabelArray:', arrayDefMatch[1].substring(0, 200) + '...');
             categoriesMatch = [null, arrayDefMatch[1]]; // Format to match expected structure
           } else {
             // Look for any array that looks like time categories
+            console.log('🔍 Looking for time arrays in script...');
             const timeArrays = script.match(/\[["'][0-9]{1,2}:[0-9]{2}\s[ap]m["'][\s\S]*?\]/g);
             if (timeArrays && timeArrays.length > 0) {
               console.log('✅ Found time array in script');
+              console.log('📋 Time array:', timeArrays[0].substring(0, 200) + '...');
               categoriesMatch = [null, timeArrays[0]];
+            } else {
+              // Try even broader search
+              const anyArrays = script.match(/\[[\s\S]{20,200}?\]/g);
+              if (anyArrays) {
+                console.log(`🔍 Found ${anyArrays.length} arrays in script, checking for time patterns...`);
+                anyArrays.forEach((arr, idx) => {
+                  if (arr.includes('am') || arr.includes('pm') || arr.includes('AM') || arr.includes('PM')) {
+                    console.log(`📋 Potential time array ${idx + 1}:`, arr.substring(0, 150) + '...');
+                    if (!categoriesMatch) {
+                      categoriesMatch = [null, arr];
+                    }
+                  }
+                });
+              }
             }
           }
         }
@@ -193,8 +216,8 @@ const extractUsageFromDashboard = (html, expectedType = null) => {
       console.log('HTML preview:', html.substring(0, 1000));
     }
     
-    // If we have usage data but no categories, generate default ones
-    if (!categories && usageData && usageData.length > 0) {
+    // If we have usage data but no categories (or empty categories), generate default ones
+    if ((!categories || categories.length === 0) && usageData && usageData.length > 0) {
       const isHourly = chartTitle && chartTitle.toLowerCase().includes('hourly');
       
       if (isHourly && usageData.length === 24) {
@@ -247,7 +270,10 @@ const extractUsageFromDashboard = (html, expectedType = null) => {
 
 // Publish data to MQTT
 const publishToMQTT = (data, dataType) => {
-  if (!mqttClient || !mqttClient.connected) {
+  if (config.mqtt.host === 'disabled' || config.mqtt.host === 'fake') {
+    console.log(`📊 MQTT disabled - would publish ${dataType} data`);
+    // Continue with data processing for testing
+  } else if (!mqttClient || !mqttClient.connected) {
     console.error('❌ MQTT client not connected');
     return;
   }
@@ -290,14 +316,20 @@ const publishToMQTT = (data, dataType) => {
 
   const topic = dataType === 'hourly' ? config.mqtt.topicHourly : config.mqtt.topicDaily;
   
-  mqttClient.publish(topic, JSON.stringify(payload), (err) => {
-    if (err) {
-      console.error(`❌ Failed to publish ${dataType} data to MQTT:`, err.message);
-    } else {
-      console.log(`📡 Published ${dataType} data to MQTT:`, topic);
-      console.log(`📊 Published ${dataType} usage value:`, latestUsage, 'gallons');
-    }
-  });
+  if (config.mqtt.host === 'disabled' || config.mqtt.host === 'fake') {
+    console.log(`📡 [TEST MODE] Would publish ${dataType} data to topic:`, topic);
+    console.log(`📊 [TEST MODE] ${dataType} usage value:`, latestUsage, 'gallons');
+    console.log(`📋 [TEST MODE] Sample payload:`, JSON.stringify(payload, null, 2));
+  } else {
+    mqttClient.publish(topic, JSON.stringify(payload), (err) => {
+      if (err) {
+        console.error(`❌ Failed to publish ${dataType} data to MQTT:`, err.message);
+      } else {
+        console.log(`📡 Published ${dataType} data to MQTT:`, topic);
+        console.log(`📊 Published ${dataType} usage value:`, latestUsage, 'gallons');
+      }
+    });
+  }
 };
 
 // Fetch dashboard data with authentication cookies
