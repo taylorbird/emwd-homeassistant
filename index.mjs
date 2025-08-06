@@ -330,6 +330,25 @@ const publishToMQTT = (data, dataType, requestDate = null) => {
           return; // Skip publishing duplicate
         }
       }
+    } else if (dataType === 'daily') {
+      // For daily data, add today's date with 0 usage if it's not already included
+      const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+      const latestDataDate = extractedData[extractedData.length - 1]?.timestamp;
+      
+      if (latestDataDate !== today) {
+        // Add today with 0 usage
+        const todayEntry = {
+          timestamp: today,
+          usage_cf: 0,
+          usage_gallons: 0,
+          type: 'daily'
+        };
+        extractedData.push(todayEntry);
+        entryToPublish = todayEntry;
+        console.log(`📅 Added today's date (${today}) with 0 usage - waiting for meter data`);
+      } else {
+        console.log(`📅 Today's usage already reported: ${entryToPublish.usage_cf} CF`);
+      }
     }
     
     latestUsage = entryToPublish.usage_gallons || 0;

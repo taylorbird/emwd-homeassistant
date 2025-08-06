@@ -2,24 +2,29 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
+	<!-- 05/12/2017 - Security Patch -->
+	<meta name="robots" content="noindex,nofollow" />
+	<meta name="Cache-Control" content="private" />
+	<meta name="X-Robots-Tag" content="noindex" />					  
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-<title>EMWD :: Cannot Process Request</title>
-
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>EMWD :: Water Usage Information</title>
+	
 			
 
 
 <meta name="description" content="EMWD is your power hub for customer self service web portals supplying electrical energy to residential, commercial and industrial customers.">
 <meta name="keywords" content="EMWD, MyAccount, deregulation, heating, energy, power, utility, appliance, range, stove, dryer, water heater, air conditioning, fireplace, home improvement, renovation, electricity, electric power, electric energy, electric generation, electric meter, customer service, electric bill, residential electric rates, business electric rates, energy audit, kilowatt, kilowatt hour, kWh, bill payment information, electrical usage rates, rates, bill payment information, electrical information, electricity information, electrical services">
-
-
-
+	
 
 
 
@@ -37,7 +42,311 @@
 	<link href="/PortalV4.0/capricornCustom.css" rel="stylesheet" type="text/css">
 	<link rel="shortcut icon" href="/PortalV4.0/favicon.ico" type="image/x-icon">
 	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+</head>
+
+<body class="tabContentWrapper">
+
+
+
+
+
+
+<!-- This is the processing dialog (loading bar) -->
+<div class="modal fade" id="processingDialog" tabindex="-1" role="dialog" 
+    aria-labelledby="processingDialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="text-center">
+				<div class="progress progress-striped active" style="height: 40px; margin-bottom: 0px;">
+					<div class="progress-bar progress-bar-primary" style="width: 100%; height: 40px; line-height: 40px; font-size: 14px;">
+						<strong>Loading...</strong>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div> 
+
+
+</div>
+
+<div class="panel panel-capricorn">
+	<div class="panel-body">
+		
+			
+		
+		<div style="margin-bottom: 20px;">
+			
+
+
+
+
+<!-- This is the processing dialog (loading bar) for smart meter pages which include this radio button jsp -->
+	<div class="modal fade" id="processingDialog" tabindex="-1" role="dialog" 
+			aria-labelledby="processingDialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="text-center">
+				<div class="progress progress-striped active" style="height: 40px; margin-bottom: 0px;">
+					<div id="processingBarLabel" class="progress-bar progress-bar-primary" style="width: 100%; height: 40px; line-height: 40px; font-size: 14px;">
+						<strong>Loading...</strong>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+<div id="subtabs" class="btn-group hidden-xs" data-toggle="buttons">
+
+    <label id="subTabs-button-WATSMCON" class="btn btn-default btn-lg active ">   
+    	<input type="radio" id="subTabs-WATSMCON" name="subTabs-WATSMCON" checked 
+    			data-optcde="WATSMCON"  data-opttar="" autocomplete="off" 
+    			aria-hidden="true" 
+    			rel="/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON&deviceLandingPage=WATSMCON" />
+    	<i class="fa fa-tint"></i> Water
+    </label>
+
+    <label id="subTabs-button-WATBUDFCV2" class="btn btn-default btn-lg  ">   
+    	<input type="radio" id="subTabs-WATBUDFCV2" name="subTabs-WATBUDFCV2"  
+    			data-optcde="WATBUDFCV2"  data-opttar="" autocomplete="off" 
+    			aria-hidden="true" 
+    			rel="/app/capricorn?para=waterBudgetForecastV2&menuKey=WATSMCON&tab=WATBUDFCV2&deviceLandingPage=WATBUDFCV2" />
+    	<i class="fa fa-area-chart" aria-hidden="true"></i> Water Budget
+    </label>
+
+</div>
+
+
+<div id="xs-subtabs" class="btn-group-vertical visible-xs" data-toggle="buttons">
+
+    <label id="xs-subTabs-button-WATSMCON" class="btn btn-default btn-lg active ">   
+    	<input type="radio" id="xs-subTabs-WATSMCON" name="xs-subTabs-WATSMCON"  checked 
+    			data-opttar=""  autocomplete="off" 
+    			rel="/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON&deviceLandingPage=WATSMCON" />
+    	<i class="fa fa-tint"></i> Water
+    </label>
+
+    <label id="xs-subTabs-button-WATBUDFCV2" class="btn btn-default btn-lg  ">   
+    	<input type="radio" id="xs-subTabs-WATBUDFCV2" name="xs-subTabs-WATBUDFCV2"   
+    			data-opttar=""  autocomplete="off" 
+    			rel="/app/capricorn?para=waterBudgetForecastV2&menuKey=WATSMCON&tab=WATBUDFCV2&deviceLandingPage=WATBUDFCV2" />
+    	<i class="fa fa-area-chart" aria-hidden="true"></i> Water Budget
+    </label>
+
+</div>
+
+<script>
+$(function () {
+	$('[data-toggle="nav-popover"]').popover()
+})
+</script>
+
+
+
+		</div>
+		
 	
+			
+
+		
+			<h4>Water Usage Information</h4>
+			
+		
+     
+        
+        
+
+		  
+		  	<form name="hydroInquiry" method="post" action="/app/index.jsp">
+				<input type="hidden" name="para"/>
+			  	<input type="hidden" name="downloadConsumption"/>
+			  	<input type="hidden" name="userAction"/>
+			  	<input type="hidden" name="type"/>
+			  	<input type="hidden" name="inquiryType"/>
+			  	<input type="hidden" name="day"/>
+			  	<input type="hidden" name="fromDate" value="2025-07-07" />
+			  	<input type="hidden" name="toDate" value="2025-08-05" />
+			  	<input type="hidden" name="tab" value="WATSMCON"> 
+			  	
+			    	<input type="hidden" name="print" value="N" />
+			  	
+		        
+		  		<!-- First Row of Buttons -->
+		  		<div class="text-center panel-body container-fluid">
+					<div class="row">
+				   	    	  
+							  
+							  		<div class="col-sm-4">
+										<button class="multilineBtn btn btn-default btn-block verticalBtn" type="button" id="dailyConsumptionUageChart" name="dailyConsumptionUageChart" onClick="processRequest('dailyUsageChart')" >
+											<i class="fa fa-calendar-o" aria-hidden="true"></i> Daily Usage 
+										</button>
+									</div>
+							  
+							  
+							  
+								  
+								  		<div class="col-sm-4">
+								  			<button type="button" class="multilineBtn btn btn-default btn-block verticalBtn active" id="hourlyUsage" name="hourlyUsage">
+									  				<i class="fa fa-clock-o" aria-hidden="true"></i> Hourly Usage
+									  		</button>
+								  		</div>
+								  
+							  
+					   
+					   
+					   
+				       
+			    	</div> <!-- ./row -->
+				</div>
+			    <!-- END First Row of Buttons -->
+			   
+			   
+			   
+			   
+			   <!-- Second Row of buttons -->
+			   <!-- Date Pickers -->
+			   
+			   <!-- END Second Row of buttons -->
+			 
+			 </form>
+		  
+		  
+
+        
+           
+
+
+
+		
+  	  	
+ 	  	
+ 	  	
+     		<div id="customEventWidget"></div>
+     	
+
+ 		
+		
+            
+	        
+	        
+			<div class="panel panel-default">
+				<div id="chart_container" class="notranslate"></div>
+				
+					<div class="chartTipsContainer text-center">
+						<img src="/app/icons/16x16/BulbOn.png" role="presentation"/>DID YOU KNOW: You can turn chart features on and off by clicking the labels in the legend above. You can zoom in the chart by clicking and dragging inside the chart area.
+					</div>
+				 
+				
+				<!-- previous, next buttons -->
+				
+		       		<table style="width: 100%">
+			         	<tr>
+			         	  
+			         	  <td>
+			         	    
+			        	    <input id="btnPreviousDay" class="btn btn-default" type="button" value="&lt; Previous Day" id="smNag"/>
+			        	  </td>
+			        	  
+			        	  
+			        	</tr>
+		     		</table>
+		       	
+				<!-- END previous, next buttons -->
+			</div>
+			
+         	
+         	
+         			
+		
+
+			<!-- TOU Summary section only for Electric inquiry type -->
+		    
+		  
+			
+			
+			
+          
+          
+          
+          
+          	<div class="alert alert-info pageIntroContainer">
+          		<p><p>Use the bar graph functions in this interactive water usage chart to assist you in understanding and managing your consumption patterns. The consumption data displayed here is the most current available, but will not be finalized until the billing date.</p><p>The Daily Usage Chart allows you to select and view up to ninety days of data at one time, the Hourly Usage Chart displays hourly consumption for a single day selected by you. Please note: the current date is outside the range of recorded values.</p><p>Water usage will display in chart if all validation parameters are passed. Billing period data is validated prior to release of bill.</p><hr><div class="container"> <div class="row"> <div class="col-sm-6"> <p>EMWD meters measure water use in cubic feet and acre feet. All residential customers have meters that measure cubic feet. Non-residential customers may have meters that measure cubic feet as well as landscape meters that measure in acre feet.</p><p><strong>For Residential Customers:</strong> <br>EMWD converts cubic feet (CF) into billing units for your monthly billing statement. <br>1 CF=7.48 gallons <br>1 billing unit (BU)=100 CF or 748 gallons</p><p><strong>For Non-residential Customers:</strong> <br>Please note: Accounts not billed in billing units are billed in acre feet.</p><p></p></div><div class="col-sm-6"> <img width='101.5%'src='/capWSSUEv3.3.0/images/Pitcher- Sink- Pool - Gallons to Cubic Feet.png'> </div></div></div></p>
+          	</div>
+          
+
+		
+		
+          
+          
+			
+
+
+
+<div class="container-fluid pageCommentsAndRating" id="pageCommentsAndRating">
+	<hr />
+	<div class="row">
+		<div><input id="documentId" name="documentId" type="hidden" value="SMCONSUM" /></div>
+		
+		
+		
+		<div class="col-sm-8">
+			<form id="pageCommentForm">
+				<div class="input-group">
+					<div class="input-group-addon">
+						<span class="glyphicon glyphicon-comment"></span>
+					</div>
+					<input class="form-control" id="input-pageComment" maxlength='1024' title="Rating Comment" name="ratingComment" placeholder="We welcome your comments and feedback" type="text" /> 
+					<span class="input-group-btn">
+						<button class="btn btn-default" id="pageCommentButton" name="pageCommentButton" type="button" aria-labelledby="input-pageComment">
+							<span class="glyphicon glyphicon-ok"></span> 
+						</button> 
+					</span>
+				</div>
+				
+				<!-- /input-group -->
+				<div id="commentsResponse"></div>
+				<input type="hidden" name="jspCSRFToken" value="fab848675309d6e44b53e177264b5d9b34c5d181" />
+			</form>
+		</div>
+		
+		<div class="col-sm-4">
+			<div class="star-rating"><span class="star-rating-label  ">Rate this page</span> 
+				<span class="fa fa-star-o" data-rating="1"></span> 
+				<span class="fa fa-star-o" data-rating="2"></span> 
+				<span class="fa fa-star-o" data-rating="3"></span> 
+				<span class="fa fa-star-o" data-rating="4"></span> 
+				<span class="fa fa-star-o" data-rating="5"></span> 
+				<input class="rating-value" id="input-pageRating" name="pageRating" type="hidden" />
+			</div>
+			<div class="text-right" id="ratingResponse"></div>
+		</div>
+		
+		
+	</div> <!-- ./row -->
+</div> <!-- ./Page Comments & Rating -->
+
+
+
+		  
+          
+	</div>
+	<!-- ./panel-body -->
+</div> 
+<!-- END panel  -->
+
+
+
+
+
+
+
+
 
 
 
@@ -710,60 +1019,886 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 
 
 
-</head>
-
-<body>
-
-
-
-
-<form name="logOffForm" name="logOffForm" role="form" class="form-horizontal" method="post" action="/app/capricorn">
-	<input type="hidden" name="para" value="logoff"/>
-	<input type="hidden" name="jspCSRFToken" value=""/>
-</form>
- 
-   <div >
-	   <div class="panel panel-capricorn panel-info text-center center-block" >
-	   		<div class="panel-heading">Oops! Your request cannot be completed.</div>
-		    
-		    <div class="panel-body">
-		      <p>Our apologies.</p>
-		      
-		      
-			  	<div class="alert alert-danger">An error was encountered when trying to complete your request. Please try again.</div>
-			  
-			  
-			  <p>Having problems? Please contact our <a href="https://www.emwd.org/contact-us" target="_blank">customer support team</a>.</p>
-	     	  
-	     	  
-	     	  
-	     	  	<input class="btn btn-default" type="button" name="Button" value="Go back and try your request again" onClick="history.go(-1)" autofocus />
-	     	  
-	     	   
-	     	  
-	     	  
-	     	  
-	   		</div>
-	   </div>
-   </div>
+<script type="text/javascript">
+<!--
+function entInt(field) {
+  var result = new String();
+  var numbers = "0123456789.";
+  var chars = field.value.split(""); // create array 
+  for (i = 0; i < chars.length; i++) {
+   if (numbers.indexOf(chars[i]) != -1) result += chars[i];
+  }
+  if (field.value != result) field.value = result;
+}
 
 
 
-<script>
+var hourlyOffPeakRate = 0.0;
+var hourlyMidPeakRate = 0.0;
+var hourlyOnPeakRate = 0.0;
 
-function back2CapricornHomePage() {
-	   
-	    location.href = "/app/";
-	  
+//#330-074
+var hourlyGenerationRate = "";
+var hourlyDemandRate = "";
+
+// Setup JS arrays for TOU amount on bar chart
+
+var aTouDate = [];
+var aTouOffPeakAmount = [];
+var aTouMidPeakAmount = [];
+var aTouOnPeakAmount = [];
+
+// use for optional time block range display on mouse-out bubble on hourly chart
+var xLabels = ["12:00 am","1:00 am","2:00 am","3:00 am","4:00 am","5:00 am","6:00 am","7:00 am","8:00 am","9:00 am","10:00 am","11:00 am","12:00 pm","1:00 pm","2:00 pm","3:00 pm","4:00 pm","5:00 pm","6:00 pm","7:00 pm","8:00 pm","9:00 pm","10:00 pm","11:00 pm","12:00 am"];
+
+
+var xAxisLabelArray = []; 
+
+	
+	var labelValues=["12:00 am",'1:00 am','2:00 am','3:00 am','4:00 am','5:00 am','6:00 am','7:00 am','8:00 am','9:00 am','10:00 am','11:00 am','12:00 pm','1:00 pm','2:00 pm','3:00 pm','4:00 pm','5:00 pm','6:00 pm','7:00 pm','8:00 pm','9:00 pm','10:00 pm','11:00 pm','12:00 am'];
+	for (var i = 1; i < labelValues.length; i++) { 
+		var hourStrValue = labelValues[i];
+		try {
+           var index = labelValues.lastIndexOf(labelValues[i]);
+          if (index!=-1)
+            	hourStrValue = labelValues[i-1] + " - " + labelValues[i];
+          } catch (err){ }
+          xAxisLabelArray.push(hourStrValue);
 	}
 
 
-function logoff() {
-    
-    var form = document.logOffForm;
-    form.submit();
+
+
+var unitListPerDayOrHour = [ ] ;
+var unitList ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '0', onPeak : '0', midPeak : '0', actualReading : '0'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '0', onPeak : '0', midPeak : '0', actualReading : '0'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '0', onPeak : '0', midPeak : '0', actualReading : '0'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '7', onPeak : '0', midPeak : '0', actualReading : '7'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '7', onPeak : '0', midPeak : '0', actualReading : '15'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '7', onPeak : '0', midPeak : '0', actualReading : '22'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '7', onPeak : '0', midPeak : '0', actualReading : '30'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '22', onPeak : '0', midPeak : '0', actualReading : '52'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '0', onPeak : '0', midPeak : '0', actualReading : '52'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '0', onPeak : '0', midPeak : '0', actualReading : '52'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '7', onPeak : '0', midPeak : '0', actualReading : '60'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '0', onPeak : '0', midPeak : '0', actualReading : '60'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '7', onPeak : '0', midPeak : '0', actualReading : '67'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '7', onPeak : '0', midPeak : '0', actualReading : '75'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '0', onPeak : '0', midPeak : '0', actualReading : '75'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '7', onPeak : '0', midPeak : '0', actualReading : '82'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '0', onPeak : '0', midPeak : '0', actualReading : '82'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '7', onPeak : '0', midPeak : '0', actualReading : '90'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '7', onPeak : '0', midPeak : '0', actualReading : '97'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '30', onPeak : '0', midPeak : '0', actualReading : '127'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '105', onPeak : '0', midPeak : '0', actualReading : '232'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '75', onPeak : '0', midPeak : '0', actualReading : '307'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '0', onPeak : '0', midPeak : '0', actualReading : '307'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+		unitList = [ ] ;
+
+			unitList.push({unit: 'Gal', offPeak: '0', onPeak : '0', midPeak : '0', actualReading : '307'} ); 
+
+		unitListPerDayOrHour.push(unitList) ;
+
+//utility method to return tool tip string for given x series
+function getUnitConversionToolTip(x) {	
+	var toolTip = '' ;
+	if (unitListPerDayOrHour.length > 0 ) {
+		var units = unitListPerDayOrHour[x];
+		for (var i = 0 ; i < units.length ; i++ ) {
+			toolTip += ' <br> ' + units[i].offPeak + ' ' + units[i].unit ;			
+		}
+	}	
+	return toolTip;
 }
+function getActualReadingConversionToolTip(x) {	
+	var toolTip = '' ;
+	if (unitListPerDayOrHour.length > 0 ) {
+		var units = unitListPerDayOrHour[x];
+		for (var i = 0 ; i < units.length ; i++ ) {
+			toolTip += ' <br> ' + units[i].actualReading + ' ' + units[i].unit ;			
+		}
+	}	
+	return toolTip;
+}
+
+var chart;
+$(document).ready(function() {
+
+	chart = new Highcharts.Chart({
+		chart: {
+			renderTo: 'chart_container',
+			plotShadow: true,
+			type: 'scatter',
+			
+			style:{
+				fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif;'
+			},
+			
+			zoomType: 'x',
+			spacingRight: 20,
+			// 330-513 Irrigation Control feature controlling the background of the chart depending on if watering is permitted
+			
+		},
+		
+	        exporting: {
+	            url: 'https://export.highcharts.com'
+	        },
+	    
+		title: {
+			text: "Hourly Usage Chart",
+			style: { font: 'bold 12px "Helvetica Neue", Helvetica, Arial, sans-serif;' }
+		},
+		subtitle: {
+			text: "For August 5, 2025 ",
+			style: { font: 'bold 12px "Helvetica Neue", Helvetica, Arial, sans-serif;', color: '#4572A7' }
+		},	
+		credits: {
+            enabled: false
+        },
+      	legend: {
+            itemHiddenStyle: {
+                color: '#919191'
+            }
+        },
+		xAxis: {
+			
+			
+			categories: xAxisLabelArray,
+			
+			labels: {
+			    
+				rotation: -70,
+				align: 'right',
+				
+				style: { font: 'normal 10px "Helvetica Neue", Helvetica, Arial, sans-serif;' }
+			}
+			//,maxZoom: 14, // 14 days
+		},
+		yAxis: [{
+			// Primary yAxis
+			labels: {
+				formatter: function() {
+				    				
+					return parseFloat(this.value).toLocaleString('en-US') + ' CF';
+					
+				},
+				style: { color: '#4572A7' }
+			},
+			title: {
+				text: "Water Usage CF",
+				style: { color: '#4572A7' }
+			},
+						
+			//min: 0,
+			opposite: false
+		}
+		
+		
+		,{ // Actual Reading yAxis (Change Number 330-002)
+			labels: {
+				formatter: function() {
+					
+					
+					return this.value + ' CF';
+				},
+				style: { color: '#00A9E0' }
+			},			
+			title: {
+				text: "Cumulative Usage",
+				style: { color: '#00A9E0' }
+			},
+	        opposite: true
+	    }
+		
+		],	
+		tooltip: {
+			useHTML: true,
+			formatter: function() {
+				var s;
+				if (this.point.name) { // the pie chart
+					s = '' + this.point.name + ': '+ parseFloat(this.y).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:5}) + ' CF';
+					s  += getUnitConversionToolTip(this.point.index )  ; 					
+				} else if (this.series.name) {
+					
+					// For event flag series
+					if(this.series.options.id === 'eventFlag'){
+						s = this.point.text;
+					}
+					
+					
+					else if (this.series.options.id === "consumptionData_generation") {
+						
+						var hourStr = this.x;
+					    
+			             try {
+			               index = xLabels.lastIndexOf(this.x);
+			               if (index!=-1)
+			            	 hourStr = xLabels[index-1] + " - " + this.x;
+			             } catch (err){ }
+			   			 
+						
+						
+					         s = '' + hourStr + ' <br> ' + parseFloat(this.y).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:5}) 
+					         		+ ' CF (' + this.series.name + ')';
+					         s  += getUnitConversionToolTip(this.point.index )  ; 					         
+					         if (hourlyGenerationRate != 0) 
+					        	 
+					        	 s += '<br> $' + ((this.y * hourlyGenerationRate)/100).toFixed(2);
+					        	 
+						
+						
+						
+					}
+					
+					
+					
+					else if (this.series.options.id === "consumptionData_net") {
+						
+						var hourStr = this.x;
+					    
+			             try {
+			               index = xLabels.lastIndexOf(this.x);
+			               if (index!=-1)
+			            	 hourStr = xLabels[index-1] + " - " + this.x;
+			             } catch (err){ }
+			   			 
+						
+						
+						
+							s = '' + hourStr + ' <br> ' + parseFloat(this.y).toLocaleString('en-US') + ' CF (' + this.series.name + ')';
+						
+						
+						
+					}
+					
+					
+					else if (this.series.options.id === "consumptionData_demand") {
+						
+						var hourStr = this.x;
+					    
+			             try {
+			               index = xLabels.lastIndexOf(this.x);
+			               if (index!=-1)
+			            	 hourStr = xLabels[index-1] + " - " + this.x;
+			             } catch (err){ }
+			   			 
+						
+						
+						
+							s = '' + hourStr + ' <br> ' + parseFloat(this.y).toLocaleString('en-US') + ' CF (' + this.series.name + ')';
+						
+						
+						
+					}
+					
+					else if (this.series.name.indexOf("peak") != -1) {
+
+					    
+					         var showUsageCostOnSmartMeterChart = false;
+					    
+					           var hourStr = this.x;
+					    
+					             try {
+					               index = xLabels.lastIndexOf(this.x);
+					               if (index!=-1)
+					            	 hourStr = xLabels[index-1] + " - " + this.x;
+					             } catch (err){ }
+					    
+					    
+					    		s = '' + this.x + ' <br> ' 
+					    				+ parseFloat(this.y).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:5}) 
+					    				+ ' CF ';
+						         s  += getUnitConversionToolTip(this.point.index )  ; 
+						         if (showUsageCostOnSmartMeterChart && hourlyOffPeakRate != 0) 
+						        	 
+						        	 s += '<br> $' + ((this.y * hourlyOffPeakRate)/100).toFixed(2);
+						        	 
+						
+						
+						
+						
+						
+					} else if (this.series.name == "Usage") { // 2016-10-05 based on non-peak keyword in properties file for the series name
+						
+						
+					         s = '' + this.x + ' <br> ' + parseFloat(this.y).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:5}) 
+					         		+ ' CF ';
+					         s  += getUnitConversionToolTip(this.point.index )  ; 
+					         if (hourlyOffPeakRate != 0) 
+					        	 
+					        	 s += '<br> $' + ((this.y * hourlyOffPeakRate)/100).toFixed(2);
+					        	 
+						
+						
+					} else {
+					    
+							
+								
+								
+								
+							    s = 'At ' + this.x + ' <br> ' + this.series.name + ' = ' + parseFloat(this.y).toLocaleString('en-US') + ' CF';
+							    s+= getActualReadingConversionToolTip(this.point.index) ; 					    
+						    
+						    
+						
+				    }		
+				} else {
+					s = '' + this.x + ': ' + parseFloat(this.y).toLocaleString('en-US');
+				}
+				return s;
+			}, 
+			style: { font: 'bold 8px "Helvetica Neue", Helvetica, Arial, sans-serif;' }
+		},
+		plotOptions: {
+			column: {
+				stacking: 'normal',
+				dataLabels: {
+					enabled: true,
+					
+					style:{
+						textOutline: false
+					},
+					
+					color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+				}
+			},
+			series: {
+				cursor: 'pointer',
+				stickyTracking: false, 
+                 				
+				events: {
+				    
+            		legendItemClick: function(event) {
+                		var visibility = this.visible ? 'visible' : 'hidden';
+                        //if (!confirm('The series is currently ' + visibility +'. Do you want to change that?')) {
+                        //	return false;
+                        //}
+                                         
+                        if ("Yes" != "Yes") {
+                          if (this.name.indexOf("peak") != -1) return false; // not to hide on-peak, mid-peak and off-peak from the legend
+                        }
+                    }
+                           	
+                }
+            }
+        },		
+		series: [
+		
+		
+		
+		{
+
+			type: 'column',
+			name: "Usage",
+			color: '#8BC43F',
+			data: [0.000, 0.000, 0.000, 1.000, 1.000, 1.000, 1.000, 3.000, 0.000, 0.000, 1.000, 0.000, 1.000, 1.000, 0.000, 1.000, 0.000, 1.000, 1.000, 4.000, 14.000, 10.000, 0.000, 0.000],
+			dataLabels: {
+				enabled: false
+			},
+			yAxis: 0,
+			lineWidth: 2,
+			showInLegend: true //330-526 AS
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			
+		
+		
+		, {
+			type: 'spline',
+			name: 'Cumulative Usage',
+			color: '#00A9E0',
+			data: [0.000,0.000,0.000,1.000,2.000,3.000,4.000,7.000,7.000,7.000,8.000,8.000,9.000,10.000,10.000,11.000,11.000,12.000,13.000,17.000,31.000,41.000,41.000,41.000],
+			yAxis: 1,
+			lineWidth: 2
+		}
+		
+		]
+	});
+});
+
+
+
+
+
+
+ $(document).ready(function() {
+
+//    $('#dailyConsumptionUageChart').click(function() {
+//      	showProcessingDialog();
+//    });
+//    $('#currentBillingChart').click(function() {
+//      	showProcessingDialog();
+//    });   
+//    $('#hourlyUsage').click(function() {
+//      	showProcessingDialog();
+//    });
+//    $('#usageComparison').click(function() {
+//      	showProcessingDialog();
+//    });
+//    $('#refresh').click(function() {
+//     	showProcessingDialog();
+//    });
+   
+   
+   $('#smNag').click(function() {
+     	showProcessingDialog();
+   });
+   
+   
+   
+   // init responsive datatable
+   $(" #table-usageComparison, #table-usageComparisonWithContractPrice").DataTable({          
+	 responsive:  true,
+	 "paging":    false,
+     "ordering":  false,
+     "info":      false,
+	 "searching": false,
+	 "autoWidth": false,
+	 "initComplete": function (oSettings, json) {
+		// fix the issue of rendering responsive table on ios safari. 
+		if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)){
+			var outerFrame = $(parent.document).find("#tabs-SMCONSUM");
+			if (outerFrame.length > 0) { // CAP-1538 proceed only when the outer frame is found
+				var width = outerFrame.width();
+				$('#chart_container').css("width", width-10);
+				$('#summary_container').css("width", width-45);
+				/* $('.datatable-container').css("width", width-45);
+				this.fnAdjustColumnSizing(true); */
+			}
+		}
+	},
+	 "drawCallback": function() {
+		// add aria attribute to datatable to improve accessibility.
+		this.attr("role", "presentation");
+		this.find("thead th").attr("role", "columnheader");
+    	this.find("td").attr("role", "gridcell");
+	
+	 }
+   });
+   
+   
+	
+		var loadCustomEventWidgetUrl = "/app/capricorn?para=editCustomEvents&meterId=400027755&viewInChart=TOU&onSeriesID=consumptionData";
+		$.ajax({
+			type:"get",
+		    cache: false,
+		    url: loadCustomEventWidgetUrl,
+		    success: function(data){
+		    	$("#customEventWidget").html(data);
+		    }
+		 }); 
+	
+   
+    
+	
+		$('#btnPreviousDay').on('click', function(e){
+			showProcessingDialog(); 
+			var prevDateLink = "/app/capricorn?para=smartMeterConsum&type=hourly&inquiryType=water&day=2025-08-04"
+							+ "&fromDate=2025-07-07&toDate=2025-08-05"
+							+ "&tab=WATSMCON" 
+							+ "&selectedMeterId=400027755" 
+							+ "&selectedRegisterNumber="; 
+			
+			window.location = prevDateLink;
+		});
+	
+	
+	
+	
+		
+	
+ });
+ 
+ 
+now = new Date;
+theYear = now.getYear();
+if (theYear < 1900)
+  theYear = theYear + 1900;
+
+ 
+function processRequest(buttonFunction) {
+  var validData = true;
+  form = document.hydroInquiry
+  form.action = "/app/capricorn"
+  form.para.value = "consumptionInquiry"
+  if (buttonFunction == "chart") {
+    form.showChart.value = "Y"
+  } else if (buttonFunction == "search") {
+    form.action = "/app/capricorn";
+    form.para.value = "selectAccount";
+    form.userAction.value = "search";
+  } else if (buttonFunction == "dailyUsageChart") {
+    form.action = "/app/capricorn?para=smartMeterConsum&fromDate=2025-07-07&toDate=2025-08-05" 
+    		+ "&inquiryType=water"
+   			+ "&selectedMeterId=400027755" 
+    		+ "&selectedRegisterNumber="; 
+    		
+  } else if (buttonFunction == "refreshChart") {
+    if (form.year_from != undefined && form.year_from.value != "") {
+    fromYear = form.year_from.value;
+    fromMonth = form.month_from.value;
+    fromDay = form.day_from.value;
+    } else {
+    fromYear = form.fromDate.value.substring(0,4);
+    fromMonth = form.fromDate.value.substring(5,7);
+    fromDay = form.fromDate.value.substring(8);
+    }
+    if (form.year_to != undefined && form.year_to.value != "") {
+    toYear = form.year_to.value;
+    toMonth = form.month_to.value;
+    toDay = form.day_to.value;
+    } else {
+    toYear = form.toDate.value.substring(0,4);
+    toMonth = form.toDate.value.substring(5,7);
+    toDay = form.toDate.value.substring(8);
+    }
+    
+    
+    form.action = "/app/capricorn?para=smartMeterConsum&inquiryType=water&fromYear="+fromYear+"&fromMonth="+fromMonth+"&fromDay="+fromDay+"&toYear="+toYear+"&toMonth="+toMonth+"&toDay="+toDay;
+    var fromDate = new Date(fromYear, fromMonth-1, fromDay);
+    var toDate = new Date(toYear, toMonth-1, toDay);
+  
+    var daysDiff = daysBetween(fromDate, toDate);
+    
+    if (daysDiff < 0) {
+      validData = false;
+      alert("From Date cannot be greater than To Date");
+    } else if (daysDiff > 90) {
+      validData = false;
+      alert("From Date and To Date cannot be more than");
+    }
+  } else if (buttonFunction == "usageComparison") {
+    
+    fromYear = "2025";
+    fromMonth = "07";
+    fromDay = "07";
+    toYear = "2025";
+    toMonth = "08";
+    toDay = "05";        
+    
+    var contractPrice = $("#contractPrice").val();
+    form.action = "/app/capricorn?para=usageComparison&inquiryType=water&fromYear="+fromYear+"&fromMonth="+fromMonth+"&fromDay="+fromDay+"&toYear="+toYear+"&toMonth="+toMonth+"&toDay="+toDay+"&tab=SMCOMPAR" + "&contractPrice=" + contractPrice;
+    
+    var fromDate = new Date(fromYear, fromMonth-1, fromDay);
+    var toDate = new Date(toYear, toMonth-1, toDay); 
+    var daysDiff = daysBetween(fromDate, toDate);
+    if (daysDiff < 0) {
+      validData = false;
+      alert("From Date cannot be greater than To Date");
+    } else if (daysDiff > 90) {
+      validData = false;
+      alert("From Date and To Date cannot be more than 90 days");
+    }
+    
+  } else if (buttonFunction == "hourlyUsage") {
+    form.para.value = "smartMeterConsum";
+    form.type.value = "hourly";
+    form.inquiryType.value = "water";
+    form.day.value = "";
+    form.tab.value = "WATSMCON"; 
+    
+    if(form.selectedMeterId != undefined){ 
+    	form.selectedMeterId.value = "400027755"; 
+    }
+    if(form.selectedRegisterNumber != undefined){
+    	form.selectedRegisterNumber.value = ""; 
+    }
+    
+  } else if (buttonFunction == "currentBillingChart") {  
+    
+    	alert("Error: missing information on current billing date.");
+       
+  } else {
+    form.action = "/app/index.jsp";
+  }
+  
+  if (validData == true) {
+    showProcessingDialog();
+    form.submit();
+  }
+  return
+}
+
+// function downloadSmartMeterConsumptionHistory() {
+//   form = document.hydroInquiry
+//   form.downloadConsumption.value = "Y"
+
+//   form.para.value = "smartMeterConsum"
+//   form.submit()
+// }
+
+function downloadFiles() { //v2.0
+  theURL = "/app/ExcelExport?key="
+  window.open(theURL,'ConsumptionHistory','toolbar=yes,width=780,height=600,status=no,scrollbars=yes');
+}
+
+function daysBetween(fromDate, toDate) {
+    var DSTAdjust = 0;
+    // constants used for our calculations below
+    const oneMinute = 1000 * 60;
+    const oneDay = oneMinute * 60 * 24;
+    // equalize times in case date objects have them
+    fromDate.setHours(0);
+    fromDate.setMinutes(0);
+    fromDate.setSeconds(0);
+    toDate.setHours(0);
+    toDate.setMinutes(0);
+    toDate.setSeconds(0);
+    // take care of spans across Daylight Saving Time changes
+    var diff = "";
+    if (toDate > fromDate) {
+        DSTAdjust = (toDate.getTimezoneOffset() - fromDate.getTimezoneOffset()) * oneMinute;
+        diff = Math.abs(toDate.getTime() - fromDate.getTime()) - DSTAdjust;
+    } else {
+        DSTAdjust = (fromDate.getTimezoneOffset() - toDate.getTimezoneOffset()) * oneMinute;   
+        diff = (toDate.getTime() - fromDate.getTime()) - DSTAdjust; 
+    }
+    var daysDiff = Math.ceil(diff/oneDay) + 1; 
+    return daysDiff;
+}
+
+function processDownload() { // Change Number : 300-013
+
+	 
+   	if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)){
+	   var newDownloadTab = window.open('', '_blank');
+	   newDownloadTab.document.write('Loading File...');
+  }	
+	
+  var ajaxURL = "/app/capricorn?para=ajaxDownloadConsumptionData&type=smartmeter&inquiryType=water"; 
+  $.ajax({type:"get",
+     cache: false,
+     url:ajaxURL,
+     success: function(data){
+       var encryptedKey = $.trim(data);
+       
+        
+       if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)){
+    	   var downloadURL = "/app/ExcelExport?key=" + encryptedKey;
+    	   newDownloadTab.location.href = downloadURL;
+    	   
+	   }else{
+	       document.getElementById("downloadData").action = "/app/ExcelExport?key=" + encryptedKey;
+	       document.downloadData.submit(); 
+	   }
+       
+     }
+  }); 
+}
+
+
+
+
+	$('#TOU_fromDate_picker').datetimepicker({
+		format: 'MM/DD/YYYY',
+				
+		
+	    	defaultDate: new Date(2025, 07-1, 07),
+		
+	    minDate: new Date(2011,0,1),
+	    
+	    	maxDate: new Date(2025, 08-1, 05),
+	    
+	    locale: 'en'
+	
+	}).on('dp.change', function (e) {
+		if (e.date != null) { 
+			$('#TOU_toDate_picker').data("DateTimePicker").minDate(e.date);		
+		
+			/* $(...).data("DateTimePicker").date() return moment Object. */
+			var day1 = $("#TOU_fromDate_picker").data("DateTimePicker").date().date(); //  date() = date of month in the range from 1 to 31  
+			var month1 = $("#TOU_fromDate_picker").data("DateTimePicker").date().month()+1;  // month() = month range from 0 to 11.
+			var year1 = $("#TOU_fromDate_picker ").data("DateTimePicker").date().year(); 
+			
+			if (day1 < 10) day1 = "0" + day1;
+			if (month1 < 10) month1 = "0" + month1;
+			
+			document.hydroInquiry.fromDate.value = year1 + "-" + month1 + "-" + day1;
+			document.hydroInquiry.year_from.value = year1;
+			document.hydroInquiry.month_from.value = month1;
+			document.hydroInquiry.day_from.value = day1;
+		}
+	});
+	
+	
+	$('#TOU_toDate_picker').datetimepicker({
+		format: 'MM/DD/YYYY',
+				
+		
+			defaultDate: new Date(2025, 08-1, 05),
+		
+	    
+	    	minDate: new Date(2025, 07-1, 07),
+	    
+	    maxDate: new Date(),
+	    locale: 'en'
+	
+	}).on('dp.change', function (e) {
+		if (e.date != null) { 
+			$('#TOU_fromDate_picker').data("DateTimePicker").maxDate(e.date);		
+			
+			/* $(...).data("DateTimePicker").date() return moment Object. */
+			var day1 = $("#TOU_toDate_picker").data("DateTimePicker").date().date(); //  date() = date of month in the range from 1 to 31  
+			var month1 = $("#TOU_toDate_picker").data("DateTimePicker").date().month()+1;  // month() = month range from 0 to 11.
+			var year1 = $("#TOU_toDate_picker ").data("DateTimePicker").date().year(); 
+			
+			if (day1 < 10) day1 = "0" + day1;
+			if (month1 < 10) month1 = "0" + month1;
+			
+			document.hydroInquiry.toDate.value = year1 + "-" + month1 + "-" + day1;
+			document.hydroInquiry.year_to.value = year1;
+			document.hydroInquiry.month_to.value = month1;
+			document.hydroInquiry.day_to.value = day1;
+		}
+	});
+
+
+function backToMyAccount(buttonName) {
+  form = document.hydroInquiry;
+  if (buttonName == "search") {
+    form.action = "/app/capricorn";
+    form.para.value = "selectAccount";
+    form.userAction.value = "search";
+    form.submit();
+  } else {
+    form.action = "/app/index.jsp";
+    form.submit();
+  }
+}
+
+// refresh the TOU chart by given fromDate, toDate. (being used by View User Event in Chart.) 
+function refreshChartByDateRange(fromDate, toDate) {
+	 if(document.hydroInquiry){	
+		 form = document.hydroInquiry;
+		 form.fromDate.value = fromDate;
+		 form.toDate.value= toDate;
+		 processRequest('refreshChart');
+	}
+}
+
+function switchInquiryType() {
+	if(document.hydroInquiry){
+		   
+		  		var selectedMeter = $("#selectedMeterId").find('option:selected');
+		  		var register = selectedMeter.data('register'); 
+		  		$("#selectedRegister").val(register);
+		  
+		  
+		 processRequest('refreshChart');
+	}
+}
+
 </script>
 
 </body>
 </html>
+
