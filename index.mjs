@@ -79,48 +79,59 @@ const publishHADiscovery = () => {
   });
 };
 
-// Extract water usage data from HTML response
-const extractUsageFromHTML = (html) => {
+// Extract water usage data from dashboard HTML
+const extractUsageFromDashboard = (html) => {
   try {
-    // Load HTML with cheerio
     const $ = cheerio.load(html);
+    let categories = null;
+    let usageData = null;
     
-    // Look for chart data in script tags
-    let chartData = null;
-    
+    // Look for the Highcharts configuration script
     $('script').each((i, elem) => {
-      const scriptContent = $(elem).html();
+      const script = $(elem).html();
+      if (!script || (!script.includes('Highcharts.Chart') && !script.includes('Highcharts.chart'))) return;
       
-      // Look for Highcharts data patterns
-      if (scriptContent && scriptContent.includes('series') && scriptContent.includes('data')) {
-        // Try to extract data array patterns like: data: [[timestamp, value], ...]
-        const dataMatch = scriptContent.match(/data\s*:\s*(\[\[.*?\]\])/s);
-        if (dataMatch) {
-          try {
-            // Clean up the matched string and parse it
-            let dataStr = dataMatch[1];
-            // Replace any JavaScript Date objects with timestamps
-            dataStr = dataStr.replace(/new Date\((.*?)\)/g, (match, p1) => {
-              return Date.parse(p1) || 0;
-            });
-            chartData = JSON.parse(dataStr);
-            return false; // Break the loop
-          } catch (e) {
-            console.log('Failed to parse data from script:', e.message);
-          }
+      // Extract date categories
+      const categoriesMatch = script.match(/categories\s*:\s*(\[[\s\S]*?\])/);
+      if (categoriesMatch) {
+        try {
+          // Replace single quotes with double quotes for valid JSON
+          const validJson = categoriesMatch[1].replace(/'/g, '"');
+          categories = JSON.parse(validJson);
+          console.log(`✅ Found ${categories.length} dates from ${categories[0]} to ${categories[categories.length-1]}`);
+        } catch (e) {
+          console.error('Failed to parse categories:', e.message);
+        }
+      }
+      
+      // Extract usage data from the "Usage" series
+      const usageMatch = script.match(/name\s*:\s*"Usage"[\s\S]*?data\s*:\s*(\[[^\]]+\])/);
+      if (usageMatch) {
+        try {
+          usageData = JSON.parse(usageMatch[1]);
+          console.log(`✅ Found ${usageData.length} usage values (in cubic feet)`);
+        } catch (e) {
+          console.error('Failed to parse usage data:', e.message);
         }
       }
     });
     
-    // If we couldn't find chart data, look for table data
-    if (!chartData) {
-      console.log('⚠️ No chart data found in HTML, looking for table data...');
-      // You might need to parse tables or other elements here
+    if (categories && usageData && categories.length === usageData.length) {
+      // Convert from cubic feet to gallons and combine with dates
+      const CF_TO_GALLONS = 7.48052;
+      
+      const combinedData = categories.map((date, i) => ({
+        date: date,
+        usage_cf: usageData[i],
+        usage_gallons: Math.round(usageData[i] * CF_TO_GALLONS)
+      }));
+      
+      return combinedData;
     }
     
-    return chartData;
+    return null;
   } catch (error) {
-    console.error('Error extracting usage from HTML:', error.message);
+    console.error('Error extracting usage from dashboard:', error.message);
     return null;
   }
 };
@@ -132,14 +143,13 @@ const publishToMQTT = (data) => {
     return;
   }
 
-  // Extract the latest cumulative usage value
   let latestUsage = 0;
   let extractedData = data;
   
-  // If data is a string (HTML), extract the usage data
+  // If data is a string (HTML), extract the usage data from dashboard
   if (typeof data === 'string') {
     console.log('📄 Received HTML response, extracting usage data...');
-    extractedData = extractUsageFromHTML(data);
+    extractedData = extractUsageFromDashboard(data);
     if (!extractedData) {
       console.error('❌ Could not extract usage data from HTML');
       return;
@@ -147,10 +157,10 @@ const publishToMQTT = (data) => {
   }
   
   if (Array.isArray(extractedData) && extractedData.length > 0) {
-    // Get the last entry's cumulative value
+    // Get the latest usage in gallons from the extracted dashboard data
     const lastEntry = extractedData[extractedData.length - 1];
-    latestUsage = lastEntry[1] || 0; // The second value is the cumulative usage
-    console.log(`💧 Latest usage: ${latestUsage} gallons`);
+    latestUsage = lastEntry.usage_gallons || 0;
+    console.log(`💧 Latest usage: ${lastEntry.usage_cf} CF = ${latestUsage} gallons (${lastEntry.date})`);
   } else {
     console.warn('⚠️ No usage data found in response');
   }
@@ -159,7 +169,9 @@ const publishToMQTT = (data) => {
     timestamp: new Date().toISOString(),
     meterId: config.emwd.meterId,
     usage: latestUsage,
-    raw_data: extractedData // Keep raw data for debugging
+    date: extractedData[extractedData.length - 1]?.date,
+    usage_cf: extractedData[extractedData.length - 1]?.usage_cf,
+    recent_data: extractedData.slice(-7) // Last 7 days
   };
 
   mqttClient.publish(config.mqtt.topic, JSON.stringify(payload), (err) => {
@@ -167,7 +179,7 @@ const publishToMQTT = (data) => {
       console.error('❌ Failed to publish to MQTT:', err.message);
     } else {
       console.log('📡 Published to MQTT:', config.mqtt.topic);
-      console.log('📊 Published usage value:', latestUsage);
+      console.log('📊 Published usage value:', latestUsage, 'gallons');
     }
   });
 };
@@ -402,65 +414,11 @@ const scrapeData = async () => {
 
     console.log('✅ Dashboard loaded successfully!\n');
     
-    // Step 5: Parse the dashboard page for consumption data
-    console.log('📊 Extracting consumption data from dashboard...');
+    // Step 5: Extract water usage data from the dashboard
+    console.log('📊 Extracting water usage data from dashboard...');
     
-    // The dashboard HTML already contains the chart data
-    const $ = cheerio.load(dashboardRes.data);
-    let consumptionData = null;
-    
-    // Look for the Highcharts initialization script in the dashboard
-    $('script').each((i, elem) => {
-      const scriptContent = $(elem).html();
-      if (scriptContent && scriptContent.includes('Highcharts') && scriptContent.includes('series')) {
-        // Look for consumption data patterns in Highcharts config
-        // Pattern 1: series with name containing 'Water' or 'Usage'
-        const patterns = [
-          /series\s*:\s*\[[\s\S]*?name\s*:\s*['"].*?[Ww]ater.*?['"][\s\S]*?data\s*:\s*(\[\[.*?\]\])/,
-          /series\s*:\s*\[[\s\S]*?id\s*:\s*['"]consumptionData['"][\s\S]*?data\s*:\s*(\[\[.*?\]\])/,
-          /name\s*:\s*['"].*?[Uu]sage.*?['"][\s\S]*?data\s*:\s*(\[\[.*?\]\])/,
-          // Generic pattern for array of [timestamp, value] pairs
-          /data\s*:\s*(\[\s*\[\s*\d{10,13}\s*,\s*\d+\.?\d*\s*\](?:\s*,\s*\[\s*\d{10,13}\s*,\s*\d+\.?\d*\s*\])*\s*\])/
-        ];
-        
-        for (const pattern of patterns) {
-          const match = scriptContent.match(pattern);
-          if (match) {
-            try {
-              consumptionData = JSON.parse(match[1]);
-              console.log(`✅ Found consumption data with ${consumptionData.length} readings`);
-              return false; // Break out of the each loop
-            } catch (e) {
-              console.log('Failed to parse with pattern, trying next...', e.message);
-            }
-          }
-        }
-      }
-    });
-    
-    // If still no data, save the dashboard for debugging
-    if (!consumptionData) {
-      console.log('⚠️ Could not find chart data in dashboard, saving for analysis...');
-      fs.writeFileSync('dashboard_page.html', dashboardRes.data);
-      console.log('💾 Saved dashboard page to dashboard_page.html for debugging');
-      
-      // Try to find any data arrays in script tags
-      const scripts = [];
-      $('script').each((i, elem) => {
-        const content = $(elem).html();
-        if (content && content.length > 100) {
-          scripts.push(`Script ${i}: ${content.substring(0, 200)}...`);
-        }
-      });
-      console.log('📜 Found scripts:', scripts.length);
-      
-      // For now, publish a dummy value to test the sensor
-      console.log('📤 Publishing dummy data for testing...');
-      publishToMQTT([[Date.now(), 12345]]);
-    } else {
-      // Publish the real data
-      publishToMQTT(consumptionData);
-    }
+    // Publish the dashboard HTML for processing
+    publishToMQTT(dashboardRes.data);
 
   } catch (err) {
     console.error('💥 Error:', err.message);
