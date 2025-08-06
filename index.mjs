@@ -274,7 +274,7 @@ const extractUsageFromDashboard = (html, expectedType = null) => {
 };
 
 // Publish data to MQTT
-const publishToMQTT = (data, dataType) => {
+const publishToMQTT = (data, dataType, requestDate = null) => {
   if (config.mqtt.host === 'disabled' || config.mqtt.host === 'fake') {
     console.log(`📊 MQTT disabled - would publish ${dataType} data`);
     // Continue with data processing for testing
@@ -342,30 +342,26 @@ const publishToMQTT = (data, dataType) => {
     return;
   }
 
-  // Calculate proper timestamps for the measurement period
+  // Calculate proper timestamps for the measurement period using ACTUAL dates from EMWD data
   const entry = extractedData[extractedData.length - 1];
   let measurementTime, lastReset;
   
   if (dataType === 'hourly' && entry?.timestamp) {
-    // For hourly data, determine the actual measurement time
+    // For hourly data, use the actual request date passed from fetchDashboardData
     const hourMatch = entry.timestamp.match(/(\d{1,2}):00\s([ap]m)/);
-    if (hourMatch) {
+    if (hourMatch && requestDate) {
       const hour24 = hourMatch[2] === 'pm' && hourMatch[1] !== '12' 
         ? parseInt(hourMatch[1]) + 12 
         : hourMatch[2] === 'am' && hourMatch[1] === '12'
         ? 0
         : parseInt(hourMatch[1]);
       
-      // Use the date from the fetched dashboard data (2 days ago)
-      const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() - 2);
-      targetDate.setHours(hour24, 0, 0, 0);
-      
-      measurementTime = targetDate.toISOString();
-      lastReset = targetDate.toISOString(); // Hour started at the same time
+      // Use the exact date from the request (YYYY-MM-DD format)
+      measurementTime = new Date(requestDate + `T${hour24.toString().padStart(2, '0')}:00:00.000Z`).toISOString();
+      lastReset = new Date(requestDate + `T${hour24.toString().padStart(2, '0')}:00:00.000Z`).toISOString();
     }
   } else if (dataType === 'daily' && entry?.timestamp) {
-    // For daily data, use the actual date from the data
+    // For daily data, the timestamp IS the actual date (YYYY-MM-DD format)
     measurementTime = new Date(entry.timestamp + 'T23:59:59.999Z').toISOString();
   }
 
@@ -470,8 +466,15 @@ const fetchDashboardData = async (cookieStr, dataType = 'daily', dailyDashboardU
       console.log('💾 Saved hourly dashboard to hourly_dashboard.html for debugging');
     }
     
-    // Extract and publish the data
-    publishToMQTT(dashboardRes.data, dataType);
+    // Extract and publish the data, passing the request date for hourly data
+    const requestedDate = dataType === 'hourly' ? 
+      (() => {
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() - 2);
+        return targetDate.toISOString().split('T')[0];
+      })() : null;
+    
+    publishToMQTT(dashboardRes.data, dataType, requestedDate);
     
     return dashboardRes.data;
     
