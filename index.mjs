@@ -85,6 +85,7 @@ const publishHADiscovery = (dataType) => {
     json_attributes_template: "{{ {'data_type': value_json.data_type, 'meter_timestamp': value_json.data_timestamp, 'measurement_time': value_json.measurement_time, 'usage_cf': value_json.usage_cf, 'scraped_at': value_json.timestamp} | tojson }}",
     // Add last_reset template for hourly sensor
     ...(sensorType === 'hourly' && {
+      last_reset_topic: sensorType === 'hourly' ? config.mqtt.topicHourly : config.mqtt.topicDaily,
       last_reset_value_template: "{{ value_json.last_reset }}"
     })
   };
@@ -376,9 +377,9 @@ const publishToMQTT = (data, dataType, requestDate = null) => {
     recent_data: dataType === 'hourly' 
       ? extractedData.slice(-24) // Last 24 hours for hourly data
       : extractedData.slice(-7),   // Last 7 days for daily data
-    // Add last_reset for hourly measurements
-    ...(dataType === 'hourly' && lastReset && {
-      last_reset: lastReset
+    // Add last_reset for hourly measurements (always include for hourly, null if not available)
+    ...(dataType === 'hourly' && {
+      last_reset: lastReset || measurementTime || new Date().toISOString()
     })
   };
 
