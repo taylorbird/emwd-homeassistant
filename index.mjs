@@ -79,6 +79,52 @@ const publishHADiscovery = () => {
   });
 };
 
+// Extract water usage data from HTML response
+const extractUsageFromHTML = (html) => {
+  try {
+    // Load HTML with cheerio
+    const $ = cheerio.load(html);
+    
+    // Look for chart data in script tags
+    let chartData = null;
+    
+    $('script').each((i, elem) => {
+      const scriptContent = $(elem).html();
+      
+      // Look for Highcharts data patterns
+      if (scriptContent && scriptContent.includes('series') && scriptContent.includes('data')) {
+        // Try to extract data array patterns like: data: [[timestamp, value], ...]
+        const dataMatch = scriptContent.match(/data\s*:\s*(\[\[.*?\]\])/s);
+        if (dataMatch) {
+          try {
+            // Clean up the matched string and parse it
+            let dataStr = dataMatch[1];
+            // Replace any JavaScript Date objects with timestamps
+            dataStr = dataStr.replace(/new Date\((.*?)\)/g, (match, p1) => {
+              return Date.parse(p1) || 0;
+            });
+            chartData = JSON.parse(dataStr);
+            return false; // Break the loop
+          } catch (e) {
+            console.log('Failed to parse data from script:', e.message);
+          }
+        }
+      }
+    });
+    
+    // If we couldn't find chart data, look for table data
+    if (!chartData) {
+      console.log('⚠️ No chart data found in HTML, looking for table data...');
+      // You might need to parse tables or other elements here
+    }
+    
+    return chartData;
+  } catch (error) {
+    console.error('Error extracting usage from HTML:', error.message);
+    return null;
+  }
+};
+
 // Publish data to MQTT
 const publishToMQTT = (data) => {
   if (!mqttClient || !mqttClient.connected) {
@@ -86,10 +132,34 @@ const publishToMQTT = (data) => {
     return;
   }
 
+  // Extract the latest cumulative usage value
+  let latestUsage = 0;
+  let extractedData = data;
+  
+  // If data is a string (HTML), extract the usage data
+  if (typeof data === 'string') {
+    console.log('📄 Received HTML response, extracting usage data...');
+    extractedData = extractUsageFromHTML(data);
+    if (!extractedData) {
+      console.error('❌ Could not extract usage data from HTML');
+      return;
+    }
+  }
+  
+  if (Array.isArray(extractedData) && extractedData.length > 0) {
+    // Get the last entry's cumulative value
+    const lastEntry = extractedData[extractedData.length - 1];
+    latestUsage = lastEntry[1] || 0; // The second value is the cumulative usage
+    console.log(`💧 Latest usage: ${latestUsage} gallons`);
+  } else {
+    console.warn('⚠️ No usage data found in response');
+  }
+
   const payload = {
     timestamp: new Date().toISOString(),
     meterId: config.emwd.meterId,
-    usage: data
+    usage: latestUsage,
+    raw_data: extractedData // Keep raw data for debugging
   };
 
   mqttClient.publish(config.mqtt.topic, JSON.stringify(payload), (err) => {
@@ -97,6 +167,7 @@ const publishToMQTT = (data) => {
       console.error('❌ Failed to publish to MQTT:', err.message);
     } else {
       console.log('📡 Published to MQTT:', config.mqtt.topic);
+      console.log('📊 Published usage value:', latestUsage);
     }
   });
 };
@@ -331,12 +402,12 @@ const scrapeData = async () => {
 
     console.log('✅ Dashboard loaded successfully!\n');
 
-    // Step 5: Now use the cookies to fetch usage data
-    const usageUrl = `https://myaccount.emwd.org/app/capricorn?para=editCustomEvents&meterId=${config.emwd.meterId}&viewInChart=TOU&onSeriesID=consumptionData&_=${Date.now()}`;
+    // Step 5: Fetch the actual chart page which contains consumption data
+    const chartUrl = `https://myaccount.emwd.org/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON`;
     
-    console.log('🔄 Fetching usage data...\n');
+    console.log('🔄 Fetching chart page with consumption data...');
     
-    const usageRes = await axios.get(usageUrl, {
+    const chartRes = await axios.get(chartUrl, {
       headers: {
         'Accept': '*/*',
         'Accept-Language': 'en-US,en;q=0.9',
@@ -356,15 +427,44 @@ const scrapeData = async () => {
       }
     });
 
-    console.log('📊 Usage data response:');
-    console.log('Status:', usageRes.status);
-    console.log('Content-Type:', usageRes.headers['content-type']);
-    console.log('Data length:', typeof usageRes.data === 'string' ? usageRes.data.length : JSON.stringify(usageRes.data).length);
-    console.log('\n📋 Response data:');
-    console.log(typeof usageRes.data === 'object' ? JSON.stringify(usageRes.data, null, 2) : usageRes.data);
-
-    // Publish to MQTT
-    publishToMQTT(usageRes.data);
+    console.log('📊 Chart page response:');
+    console.log('Status:', chartRes.status);
+    console.log('Data length:', chartRes.data.length);
+    
+    // Extract consumption data from the chart page
+    const $ = cheerio.load(chartRes.data);
+    let consumptionData = null;
+    
+    // Look for the Highcharts initialization script
+    $('script').each((i, elem) => {
+      const scriptContent = $(elem).html();
+      if (scriptContent && scriptContent.includes('consumptionData')) {
+        // Look for series data pattern
+        const match = scriptContent.match(/name\s*:\s*['"]Water Usage['"].*?data\s*:\s*(\[\[.*?\]\])/s) ||
+                      scriptContent.match(/id\s*:\s*['"]consumptionData['"].*?data\s*:\s*(\[\[.*?\]\])/s) ||
+                      scriptContent.match(/data\s*:\s*(\[\[\d+,\s*\d+\.?\d*\].*?\])/s);
+        
+        if (match) {
+          try {
+            consumptionData = JSON.parse(match[1]);
+            console.log(`✅ Found consumption data with ${consumptionData.length} readings`);
+            return false; // Break the loop
+          } catch (e) {
+            console.log('Failed to parse consumption data:', e.message);
+          }
+        }
+      }
+    });
+    
+    if (consumptionData) {
+      // Publish to MQTT
+      publishToMQTT(consumptionData);
+    } else {
+      console.error('❌ Could not find consumption data in chart page');
+      // Save for debugging
+      fs.writeFileSync('chart_page.html', chartRes.data);
+      console.log('💾 Saved chart page to chart_page.html for debugging');
+    }
 
   } catch (err) {
     console.error('💥 Error:', err.message);
