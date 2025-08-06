@@ -1,0 +1,43 @@
+{
+  "latest_usage": 217,
+  "latest_date": "2025-08-04",
+  "total_30_days": 15717,
+  "daily_average": 523.9,
+  "recent_usage": [
+    {
+      "date": "2025-07-29",
+      "usage_cf": 61,
+      "usage_gallons": 456
+    },
+    {
+      "date": "2025-07-30",
+      "usage_cf": 124,
+      "usage_gallons": 928
+    },
+    {
+      "date": "2025-07-31",
+      "usage_cf": 61,
+      "usage_gallons": 456
+    },
+    {
+      "date": "2025-08-01",
+      "usage_cf": 37,
+      "usage_gallons": 277
+    },
+    {
+      "date": "2025-08-02",
+      "usage_cf": 80,
+      "usage_gallons": 598
+    },
+    {
+      "date": "2025-08-03",
+      "usage_cf": 90,
+      "usage_gallons": 673
+    },
+    {
+      "date": "2025-08-04",
+      "usage_cf": 29,
+      "usage_gallons": 217
+    }
+  ]
+}

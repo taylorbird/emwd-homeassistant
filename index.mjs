@@ -17,7 +17,8 @@ const config = {
     port: parseInt(process.env.MQTT_PORT || '1883'),
     username: process.env.MQTT_USERNAME || '',
     password: process.env.MQTT_PASSWORD || '',
-    topic: process.env.MQTT_TOPIC || 'home/sensor/water'
+    topicDaily: process.env.MQTT_TOPIC_DAILY || 'home/sensor/water/daily',
+    topicHourly: process.env.MQTT_TOPIC_HOURLY || 'home/sensor/water/hourly'
   },
   schedule: process.env.CRON_SCHEDULE || '*/10 * * * *' // Every 10 minutes
 };
@@ -38,8 +39,11 @@ const connectMQTT = () => {
   
   mqttClient.on('connect', () => {
     console.log('📡 Connected to MQTT broker');
-    // Publish Home Assistant discovery config on connect
-    setTimeout(publishHADiscovery, 1000); // Small delay to ensure connection is stable
+    // Publish Home Assistant discovery configs on connect
+    setTimeout(() => {
+      publishHADiscovery('daily');
+      publishHADiscovery('hourly');
+    }, 1000); // Small delay to ensure connection is stable
   });
   
   mqttClient.on('error', (err) => {
@@ -47,58 +51,75 @@ const connectMQTT = () => {
   });
 };
 
-// Publish Home Assistant discovery config
-const publishHADiscovery = () => {
+// Publish Home Assistant discovery config for both sensors
+const publishHADiscovery = (dataType) => {
   if (!mqttClient || !mqttClient.connected) return;
 
-  const deviceId = `emwd_meter_${config.emwd.meterId}`;
+  const sensorType = dataType === 'hourly' ? 'hourly' : 'daily';
+  const deviceId = `emwd_meter_${config.emwd.meterId}_${sensorType}`;
   const discoveryTopic = `homeassistant/sensor/${deviceId}/config`;
   
   const discoveryConfig = {
-    name: "EMWD Water Usage",
+    name: `EMWD Water Usage (${sensorType === 'hourly' ? 'Hourly' : 'Daily'})`,
     unique_id: deviceId,
-    state_topic: config.mqtt.topic,
+    state_topic: sensorType === 'hourly' ? config.mqtt.topicHourly : config.mqtt.topicDaily,
     value_template: "{{ value_json.usage }}",
     unit_of_measurement: "gal",
     device_class: "water",
-    state_class: "total_increasing",
+    state_class: sensorType === 'hourly' ? "measurement" : "total_increasing",
     device: {
-      identifiers: [deviceId],
+      identifiers: [`emwd_meter_${config.emwd.meterId}`],
       name: `EMWD Meter ${config.emwd.meterId}`,
       manufacturer: "Eastern Municipal Water District",
-      model: "Smart Water Meter"
-    }
+      model: "Smart Water Meter",
+      sw_version: "Dual Mode (Daily + Hourly)"
+    },
+    json_attributes_topic: sensorType === 'hourly' ? config.mqtt.topicHourly : config.mqtt.topicDaily,
+    json_attributes_template: "{{ {'data_type': value_json.data_type, 'timestamp': value_json.data_timestamp, 'usage_cf': value_json.usage_cf} | tojson }}"
   };
 
   mqttClient.publish(discoveryTopic, JSON.stringify(discoveryConfig), { retain: true }, (err) => {
     if (err) {
-      console.error('❌ Failed to publish HA discovery:', err.message);
+      console.error(`❌ Failed to publish HA discovery for ${sensorType}:`, err.message);
     } else {
-      console.log('🏠 Published Home Assistant discovery config');
+      console.log(`🏠 Published Home Assistant discovery config for ${sensorType} sensor`);
     }
   });
 };
 
 // Extract water usage data from dashboard HTML
-const extractUsageFromDashboard = (html) => {
+const extractUsageFromDashboard = (html, expectedType = null) => {
   try {
     const $ = cheerio.load(html);
     let categories = null;
     let usageData = null;
+    let chartTitle = null;
     
     // Look for the Highcharts configuration script
     $('script').each((i, elem) => {
       const script = $(elem).html();
       if (!script || (!script.includes('Highcharts.Chart') && !script.includes('Highcharts.chart'))) return;
       
-      // Extract date categories
+      // Extract chart title to know if it's hourly or daily
+      const titleMatch = script.match(/title\s*:\s*{[^}]*text\s*:\s*["']([^"']+)["']/);
+      if (titleMatch) {
+        chartTitle = titleMatch[1];
+        console.log(`📊 Chart type: ${chartTitle}`);
+      }
+      
+      // Extract categories (dates for daily, hours for hourly)
       const categoriesMatch = script.match(/categories\s*:\s*(\[[\s\S]*?\])/);
       if (categoriesMatch) {
         try {
           // Replace single quotes with double quotes for valid JSON
           const validJson = categoriesMatch[1].replace(/'/g, '"');
           categories = JSON.parse(validJson);
-          console.log(`✅ Found ${categories.length} dates from ${categories[0]} to ${categories[categories.length-1]}`);
+          const isHourly = chartTitle && chartTitle.toLowerCase().includes('hourly');
+          if (isHourly) {
+            console.log(`✅ Found ${categories.length} hourly data points`);
+          } else {
+            console.log(`✅ Found ${categories.length} dates from ${categories[0]} to ${categories[categories.length-1]}`);
+          }
         } catch (e) {
           console.error('Failed to parse categories:', e.message);
         }
@@ -117,13 +138,21 @@ const extractUsageFromDashboard = (html) => {
     });
     
     if (categories && usageData && categories.length === usageData.length) {
-      // Convert from cubic feet to gallons and combine with dates
+      // Convert from cubic feet to gallons and combine with timestamps
       const CF_TO_GALLONS = 7.48052;
       
-      const combinedData = categories.map((date, i) => ({
-        date: date,
+      const isHourly = chartTitle && chartTitle.toLowerCase().includes('hourly');
+      
+      // Validate that we got the expected type of data
+      if (expectedType && ((expectedType === 'hourly') !== isHourly)) {
+        console.warn(`⚠️ Expected ${expectedType} data but got ${isHourly ? 'hourly' : 'daily'} data`);
+      }
+      
+      const combinedData = categories.map((timestamp, i) => ({
+        timestamp: timestamp,  // Will be hour (e.g., "12:00 AM") for hourly or date for daily
         usage_cf: usageData[i],
-        usage_gallons: Math.round(usageData[i] * CF_TO_GALLONS)
+        usage_gallons: Math.round(usageData[i] * CF_TO_GALLONS),
+        type: isHourly ? 'hourly' : 'daily'
       }));
       
       return combinedData;
@@ -137,7 +166,7 @@ const extractUsageFromDashboard = (html) => {
 };
 
 // Publish data to MQTT
-const publishToMQTT = (data) => {
+const publishToMQTT = (data, dataType) => {
   if (!mqttClient || !mqttClient.connected) {
     console.error('❌ MQTT client not connected');
     return;
@@ -148,10 +177,10 @@ const publishToMQTT = (data) => {
   
   // If data is a string (HTML), extract the usage data from dashboard
   if (typeof data === 'string') {
-    console.log('📄 Received HTML response, extracting usage data...');
-    extractedData = extractUsageFromDashboard(data);
+    console.log(`📄 Received HTML response for ${dataType} data, extracting usage data...`);
+    extractedData = extractUsageFromDashboard(data, dataType);
     if (!extractedData) {
-      console.error('❌ Could not extract usage data from HTML');
+      console.error(`❌ Could not extract ${dataType} usage data from HTML`);
       return;
     }
   }
@@ -160,33 +189,94 @@ const publishToMQTT = (data) => {
     // Get the latest usage in gallons from the extracted dashboard data
     const lastEntry = extractedData[extractedData.length - 1];
     latestUsage = lastEntry.usage_gallons || 0;
-    console.log(`💧 Latest usage: ${lastEntry.usage_cf} CF = ${latestUsage} gallons (${lastEntry.date})`);
+    const timeLabel = lastEntry.type === 'hourly' ? 'hour' : 'date';
+    console.log(`💧 Latest ${dataType} usage: ${lastEntry.usage_cf} CF = ${latestUsage} gallons (${timeLabel}: ${lastEntry.timestamp})`);
   } else {
-    console.warn('⚠️ No usage data found in response');
+    console.warn(`⚠️ No ${dataType} usage data found in response`);
+    return;
   }
 
   const payload = {
     timestamp: new Date().toISOString(),
     meterId: config.emwd.meterId,
     usage: latestUsage,
-    date: extractedData[extractedData.length - 1]?.date,
+    data_timestamp: extractedData[extractedData.length - 1]?.timestamp,
     usage_cf: extractedData[extractedData.length - 1]?.usage_cf,
-    recent_data: extractedData.slice(-7) // Last 7 days
+    data_type: extractedData[extractedData.length - 1]?.type || 'unknown',
+    recent_data: dataType === 'hourly' 
+      ? extractedData.slice(-24) // Last 24 hours for hourly data
+      : extractedData.slice(-7)   // Last 7 days for daily data
   };
 
-  mqttClient.publish(config.mqtt.topic, JSON.stringify(payload), (err) => {
+  const topic = dataType === 'hourly' ? config.mqtt.topicHourly : config.mqtt.topicDaily;
+  
+  mqttClient.publish(topic, JSON.stringify(payload), (err) => {
     if (err) {
-      console.error('❌ Failed to publish to MQTT:', err.message);
+      console.error(`❌ Failed to publish ${dataType} data to MQTT:`, err.message);
     } else {
-      console.log('📡 Published to MQTT:', config.mqtt.topic);
-      console.log('📊 Published usage value:', latestUsage, 'gallons');
+      console.log(`📡 Published ${dataType} data to MQTT:`, topic);
+      console.log(`📊 Published ${dataType} usage value:`, latestUsage, 'gallons');
     }
   });
 };
 
+// Fetch dashboard data with authentication cookies
+const fetchDashboardData = async (cookieStr, dataType = 'daily') => {
+  try {
+    console.log(`\n📊 Fetching ${dataType} usage data...`);
+    
+    // Build URL based on data type
+    const baseUrl = 'https://myaccount.emwd.org/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON';
+    const dashboardUrl = dataType === 'hourly' ? `${baseUrl}&type=hourly` : baseUrl;
+    
+    const dashboardRes = await axios.get(dashboardUrl, {
+      headers: {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Cookie': cookieStr,
+        'Pragma': 'no-cache',
+        'Referer': config.emwd.loginUrl,
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+        'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"macOS"'
+      }
+    });
+
+    console.log(`${dataType} dashboard response status:`, dashboardRes.status);
+    console.log(`${dataType} dashboard response length:`, dashboardRes.data.length);
+    
+    // Check if dashboard loaded successfully (should be much larger than session expired page)
+    if (dashboardRes.data.length < 5000) {
+      console.log(`⚠️ ${dataType} dashboard response seems too small, might be session expired`);
+      console.log('Dashboard response preview:', dashboardRes.data.substring(0, 500));
+      return null;
+    }
+
+    console.log(`✅ ${dataType} dashboard loaded successfully!`);
+    
+    // Extract and publish the data
+    publishToMQTT(dashboardRes.data, dataType);
+    
+    return dashboardRes.data;
+    
+  } catch (error) {
+    console.error(`❌ Error fetching ${dataType} dashboard:`, error.message);
+    return null;
+  }
+};
+
 const scrapeData = async () => {
   try {
-    console.log('🌐 Starting EMWD scrape...');
+    console.log('🌐 Starting EMWD scrape (daily + hourly data)...');
+    
     // Step 0: First visit to establish initial session (like opening incognito)
     const initialVisit = await axios.get('https://myaccount.emwd.org/app/login.jsp', {
       headers: {
@@ -376,49 +466,17 @@ const scrapeData = async () => {
     
     console.log('Final cookie string:', updatedCookieStr);
 
-    // Step 4: Visit the main dashboard first (natural browser flow after login)
-    console.log('🏠 Visiting main dashboard to establish session...\n');
+    // Step 4: Fetch both daily and hourly data
+    console.log('🏠 Fetching water usage data from dashboard...\n');
     
-    const dashboardUrl = 'https://myaccount.emwd.org/app/capricorn?para=smartMeterConsum&inquiryType=water&tab=WATSMCON';
+    // Fetch daily data first
+    await fetchDashboardData(updatedCookieStr, 'daily');
     
-    const dashboardRes = await axios.get(dashboardUrl, {
-      headers: {
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'Cookie': updatedCookieStr,
-        'Pragma': 'no-cache',
-        'Referer': config.emwd.loginUrl,
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'same-origin',
-        'Sec-Fetch-User': '?1',
-        'Upgrade-Insecure-Requests': '1',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
-        'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"macOS"'
-      }
-    });
-
-    console.log('Dashboard response status:', dashboardRes.status);
-    console.log('Dashboard response length:', dashboardRes.data.length);
+    // Small delay between requests to avoid overwhelming the server
+    await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // Check if dashboard loaded successfully (should be much larger than session expired page)
-    if (dashboardRes.data.length < 5000) {
-      console.log('⚠️  Dashboard response seems too small, might be session expired');
-      console.log('Dashboard response preview:', dashboardRes.data.substring(0, 500));
-      return;
-    }
-
-    console.log('✅ Dashboard loaded successfully!\n');
-    
-    // Step 5: Extract water usage data from the dashboard
-    console.log('📊 Extracting water usage data from dashboard...');
-    
-    // Publish the dashboard HTML for processing
-    publishToMQTT(dashboardRes.data);
+    // Then fetch hourly data
+    await fetchDashboardData(updatedCookieStr, 'hourly');
 
   } catch (err) {
     console.error('💥 Error:', err.message);
@@ -427,9 +485,10 @@ const scrapeData = async () => {
 
 // Main execution
 const main = () => {
-  console.log('🚀 Starting EMWD Water Usage Scraper');
+  console.log('🚀 Starting EMWD Water Usage Scraper (Dual Mode)');
   console.log(`📅 Schedule: ${config.schedule}`);
-  console.log(`🏠 MQTT: ${config.mqtt.host}:${config.mqtt.port} -> ${config.mqtt.topic}`);
+  console.log(`🏠 MQTT Daily: ${config.mqtt.host}:${config.mqtt.port} -> ${config.mqtt.topicDaily}`);
+  console.log(`🏠 MQTT Hourly: ${config.mqtt.host}:${config.mqtt.port} -> ${config.mqtt.topicHourly}`);
   console.log(`💧 Meter ID: ${config.emwd.meterId}\n`);
 
   // Connect to MQTT
