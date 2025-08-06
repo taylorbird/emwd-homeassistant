@@ -193,6 +193,30 @@ const extractUsageFromDashboard = (html, expectedType = null) => {
       console.log('HTML preview:', html.substring(0, 1000));
     }
     
+    // If we have usage data but no categories, generate default ones
+    if (!categories && usageData && usageData.length > 0) {
+      const isHourly = chartTitle && chartTitle.toLowerCase().includes('hourly');
+      
+      if (isHourly && usageData.length === 24) {
+        console.log('🔧 Generating default hourly categories (24 hours)');
+        categories = [];
+        for (let i = 0; i < 24; i++) {
+          const hour = i === 0 ? 12 : i > 12 ? i - 12 : i;
+          const ampm = i < 12 ? 'am' : 'pm';
+          categories.push(`${hour}:00 ${ampm}`);
+        }
+      } else if (!isHourly) {
+        console.log('🔧 Generating default daily categories');
+        categories = [];
+        const today = new Date();
+        for (let i = usageData.length - 1; i >= 0; i--) {
+          const date = new Date(today);
+          date.setDate(date.getDate() - i);
+          categories.push(date.toISOString().split('T')[0]);
+        }
+      }
+    }
+    
     if (categories && usageData && categories.length === usageData.length) {
       // Convert from cubic feet to gallons and combine with timestamps
       const CF_TO_GALLONS = 7.48052;
